@@ -117,7 +117,9 @@ const Index = () => {
                 />
               </div>
               <div className="text-center mt-10">
-                <Button variant="outline">View All Guides</Button>
+                <Button variant="outline" asChild>
+                  <Link to="/blog">View All Guides</Link>
+                </Button>
               </div>
             </div>
           </section>
