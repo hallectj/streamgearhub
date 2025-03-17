@@ -3,16 +3,30 @@ import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Remove the ThemeToggle import if you're not using it
+// import { ThemeToggle } from "@/components/ThemeToggle";
+
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false); // Start with light mode
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    // Check if dark mode is already set in localStorage
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
+    
+    // Apply the initial theme
+    if (savedDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -29,11 +43,17 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }, []);
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (darkMode) {
-      document.documentElement.classList.add("light");
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', String(newDarkMode));
+    
+    // Apply the theme
+    if (newDarkMode) {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove("light");
+      document.documentElement.classList.remove("dark");
     }
   };
 

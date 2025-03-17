@@ -86,7 +86,7 @@ const Index = () => {
               </div>
             </div>
             <img
-              src="/hero-image.svg"
+              src="https://images.pexels.com/photos/28993052/pexels-photo-28993052/free-photo-of-gamer-playing-video-game-on-desktop-setup.jpeg"
               alt="Streaming Setup"
               className="rounded-lg shadow-md"
             />
