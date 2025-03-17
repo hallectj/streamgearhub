@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ProductCard from "@/components/ProductCard";
+import MainLayout from "@/layouts/MainLayout";
 
 // Mock blog post data - in a real app, this would come from an API
 const blogData = {
@@ -96,161 +96,165 @@ const BlogPost = () => {
   
   if (!post) {
     return (
-      <div className="container py-20 text-center">
-        <h1>Post not found</h1>
-        <p className="mt-4">The blog post you're looking for doesn't exist.</p>
-        <Button asChild className="mt-6">
-          <Link to="/blog">Back to Blog</Link>
-        </Button>
-      </div>
+      <MainLayout>
+        <div className="container py-20 text-center">
+          <h1>Post not found</h1>
+          <p className="mt-4">The blog post you're looking for doesn't exist.</p>
+          <Button asChild className="mt-6">
+            <Link to="/blog">Back to Blog</Link>
+          </Button>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container max-w-7xl mx-auto px-4 py-8">
-        {/* Back navigation */}
-        <div className="mb-8">
-          <Button variant="ghost" asChild className="gap-2">
-            <Link to="/blog">
-              <ArrowLeft size={16} />
-              Back to Blog
-            </Link>
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
-          <div className="lg:col-span-2">
-            {/* Category badge */}
-            <div className="mb-4">
-              <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                {post.category}
-              </span>
-            </div>
-            
-            {/* Article title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              {post.title}
-            </h1>
-
-            {/* Meta information */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
-              <div className="flex items-center gap-1">
-                <User size={14} />
-                <span>{post.author}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Calendar size={14} />
-                <span>{post.date}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock size={14} />
-                <span>{post.readTime}</span>
-              </div>
-            </div>
-
-            {/* Featured image */}
-            <div className="rounded-lg overflow-hidden mb-8">
-              <img 
-                src={post.coverImage} 
-                alt={post.title}
-                className="w-full h-auto object-cover aspect-video"
-              />
-            </div>
-
-            {/* Article content */}
-            <div 
-              className="prose prose-lg dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-
-            {/* Tags */}
-            <div className="mt-8">
-              <h4 className="text-lg font-medium mb-2">Tags</h4>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag: string) => (
-                  <span key={tag} className="bg-muted px-3 py-1 rounded-full text-sm">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Share and bookmark */}
-            <div className="mt-10 pt-6 border-t border-border flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
-                  <Share2 size={16} className="mr-1" />
-                  Share
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Bookmark size={16} className="mr-1" />
-                  Save
-                </Button>
-              </div>
-              <Button variant="ghost" size="sm">
-                <ThumbsUp size={16} className="mr-1" />
-                Helpful
-              </Button>
-            </div>
+    <MainLayout>
+      <div className="min-h-screen">
+        <div className="container max-w-7xl mx-auto px-4 py-8">
+          {/* Back navigation */}
+          <div className="mb-8">
+            <Button variant="ghost" asChild className="gap-2">
+              <Link to="/blog">
+                <ArrowLeft size={16} />
+                Back to Blog
+              </Link>
+            </Button>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-8">
-              {/* Table of Contents */}
-              <div className="rounded-lg border border-border p-6 bg-card">
-                <h3 className="text-lg font-bold mb-4">Table of Contents</h3>
-                <nav className="space-y-2 text-sm">
-                  <a href="#" className="block text-muted-foreground hover:text-primary">Getting Started with Twitch</a>
-                  <a href="#" className="block text-muted-foreground hover:text-primary">Define Your Streaming Niche</a>
-                  <a href="#" className="block text-muted-foreground hover:text-primary">Optimize Your Stream Quality</a>
-                  <a href="#" className="block pl-4 text-muted-foreground hover:text-primary">Essential Equipment</a>
-                  <a href="#" className="block pl-4 text-muted-foreground hover:text-primary">Stream Settings</a>
-                  <a href="#" className="block text-muted-foreground hover:text-primary">Consistency is Key</a>
-                </nav>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main content */}
+            <div className="lg:col-span-2">
+              {/* Category badge */}
+              <div className="mb-4">
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                  {post.category}
+                </span>
+              </div>
+              
+              {/* Article title */}
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                {post.title}
+              </h1>
+
+              {/* Meta information */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
+                <div className="flex items-center gap-1">
+                  <User size={14} />
+                  <span>{post.author}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar size={14} />
+                  <span>{post.date}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock size={14} />
+                  <span>{post.readTime}</span>
+                </div>
               </div>
 
-              {/* Recommended Products */}
-              <div>
-                <h3 className="text-lg font-bold mb-4">Recommended Gear</h3>
-                <div className="space-y-4">
-                  {post.relatedProducts.map((product: any, index: number) => (
-                    <ProductCard
-                      key={index}
-                      image={product.image}
-                      title={product.title}
-                      price={product.price}
-                      rating={product.rating}
-                      amazonUrl={product.amazonUrl}
-                      description={product.description}
-                    />
+              {/* Featured image */}
+              <div className="rounded-lg overflow-hidden mb-8">
+                <img 
+                  src={post.coverImage} 
+                  alt={post.title}
+                  className="w-full h-auto object-cover aspect-video"
+                />
+              </div>
+
+              {/* Article content */}
+              <div 
+                className="prose prose-lg dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+
+              {/* Tags */}
+              <div className="mt-8">
+                <h4 className="text-lg font-medium mb-2">Tags</h4>
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map((tag: string) => (
+                    <span key={tag} className="bg-muted px-3 py-1 rounded-full text-sm">
+                      #{tag}
+                    </span>
                   ))}
                 </div>
-                <div className="mt-4 text-center">
-                  <Button variant="outline" className="w-full">View All Recommended Gear</Button>
-                </div>
               </div>
 
-              {/* Newsletter */}
-              <div className="rounded-lg border border-border p-6 bg-card">
-                <h3 className="text-lg font-bold mb-2">Get Streaming Tips</h3>
-                <p className="text-sm text-muted-foreground mb-4">Join our newsletter for weekly streaming tips and gear deals.</p>
-                <form className="space-y-2">
-                  <input 
-                    type="email" 
-                    placeholder="Your email address" 
-                    className="w-full px-4 py-2 rounded-md bg-background border border-input"
-                  />
-                  <Button className="w-full">Subscribe</Button>
-                </form>
+              {/* Share and bookmark */}
+              <div className="mt-10 pt-6 border-t border-border flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm">
+                    <Share2 size={16} className="mr-1" />
+                    Share
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Bookmark size={16} className="mr-1" />
+                    Save
+                  </Button>
+                </div>
+                <Button variant="ghost" size="sm">
+                  <ThumbsUp size={16} className="mr-1" />
+                  Helpful
+                </Button>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 space-y-8">
+                {/* Table of Contents */}
+                <div className="rounded-lg border border-border p-6 bg-card">
+                  <h3 className="text-lg font-bold mb-4">Table of Contents</h3>
+                  <nav className="space-y-2 text-sm">
+                    <a href="#" className="block text-muted-foreground hover:text-primary">Getting Started with Twitch</a>
+                    <a href="#" className="block text-muted-foreground hover:text-primary">Define Your Streaming Niche</a>
+                    <a href="#" className="block text-muted-foreground hover:text-primary">Optimize Your Stream Quality</a>
+                    <a href="#" className="block pl-4 text-muted-foreground hover:text-primary">Essential Equipment</a>
+                    <a href="#" className="block pl-4 text-muted-foreground hover:text-primary">Stream Settings</a>
+                    <a href="#" className="block text-muted-foreground hover:text-primary">Consistency is Key</a>
+                  </nav>
+                </div>
+
+                {/* Recommended Products */}
+                <div>
+                  <h3 className="text-lg font-bold mb-4">Recommended Gear</h3>
+                  <div className="space-y-4">
+                    {post.relatedProducts.map((product: any, index: number) => (
+                      <ProductCard
+                        key={index}
+                        image={product.image}
+                        title={product.title}
+                        price={product.price}
+                        rating={product.rating}
+                        amazonUrl={product.amazonUrl}
+                        description={product.description}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-4 text-center">
+                    <Button variant="outline" className="w-full">View All Recommended Gear</Button>
+                  </div>
+                </div>
+
+                {/* Newsletter */}
+                <div className="rounded-lg border border-border p-6 bg-card">
+                  <h3 className="text-lg font-bold mb-2">Get Streaming Tips</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Join our newsletter for weekly streaming tips and gear deals.</p>
+                  <form className="space-y-2">
+                    <input 
+                      type="email" 
+                      placeholder="Your email address" 
+                      className="w-full px-4 py-2 rounded-md bg-background border border-input"
+                    />
+                    <Button className="w-full">Subscribe</Button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

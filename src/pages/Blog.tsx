@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import ArticleCard from "@/components/ArticleCard";
 import ProductCard from "@/components/ProductCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MainLayout from "@/layouts/MainLayout";
 
 // Mock blog data
 const blogPosts = [
@@ -95,28 +96,34 @@ const Blog = () => {
     : blogPosts;
 
   return (
-    <div className="min-h-screen">
+    <MainLayout>
       {/* Header */}
-      <div className="bg-muted/50 py-16">
+      <div className="bg-gradient-to-r from-primary/10 via-purple-500/5 to-primary/10 py-20">
         <div className="container max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Streaming Blog</h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Expert guides, reviews, and tips for streaming success
-          </p>
-          
-          {/* Search bar */}
-          <div className="flex max-w-md">
-            <Input 
-              type="search" 
-              placeholder="Search articles..." 
-              className="mr-2"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button type="submit">
-              <Search className="mr-2 h-4 w-4" />
-              Search
-            </Button>
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                Streaming Insights
+              </span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Expert guides, reviews, and tips for elevating your streaming game
+            </p>
+            
+            {/* Search bar */}
+            <div className="flex max-w-md">
+              <Input 
+                type="search" 
+                placeholder="Search articles..." 
+                className="mr-2"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button type="submit" className="bg-primary hover:bg-primary/90">
+                <Search className="mr-2 h-4 w-4" />
+                Search
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +229,7 @@ const Blog = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
