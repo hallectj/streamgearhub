@@ -65,7 +65,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     { name: "Reviews", url: "/reviews" },
     { name: "Recommended Gear", url: "/recommended-gear" },
     { name: "About", url: "/about" },
-    { name: "Contact", url: "/contact" },
+    { name: "Contact", url: "mailto:hallectj@gmail.com" }, // Changed to mailto link
   ];
 
   return (
@@ -146,14 +146,25 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           >
             <nav className="flex flex-col space-y-4 pt-4">
               {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.url}
-                  className="text-foreground/90 hover:text-primary py-2 transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                item.url.startsWith('mailto:') ? (
+                  <a
+                    key={item.name}
+                    href={item.url}
+                    className="text-foreground/90 hover:text-primary py-2 transition-colors font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.name}
+                    href={item.url}
+                    className="text-foreground/90 hover:text-primary py-2 transition-colors font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
             </nav>
           </div>
