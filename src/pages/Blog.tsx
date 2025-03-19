@@ -1,9 +1,16 @@
 
+'use client'
+
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+// Remove duplicate import since it's already imported below
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Search } from "lucide-react";
+import NewsletterSignup from "@/components/NewsletterSignup";
+
 import ArticleCard from "@/components/ArticleCard";
 import ProductCard from "@/components/ProductCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -175,7 +182,7 @@ const Blog = () => {
                     />
                     <div>
                       <Link 
-                        to={`/blog/${post.slug}`}
+                        href={`/blog/${post.slug}`}
                         className="font-medium hover:text-primary line-clamp-2"
                       >
                         {post.title}

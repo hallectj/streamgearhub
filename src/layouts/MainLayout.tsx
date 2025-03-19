@@ -1,7 +1,9 @@
 
+'use client'
+
 import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 // Remove the ThemeToggle import if you're not using it
 // import { ThemeToggle } from "@/components/ThemeToggle";
@@ -76,7 +78,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       >
         <div className="container-custom">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl font-heading font-bold gradient-text">StreamGearHub</span>
             </Link>
 
@@ -85,7 +87,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               {navItems.map((item) => (
                 <Link
                   key={item.name}
-                  to={item.url}
+                  href={item.url}
                   className="text-foreground/90 hover:text-primary transition-colors font-medium"
                 >
                   {item.name}
@@ -146,7 +148,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               {navItems.map((item) => (
                 <Link
                   key={item.name}
-                  to={item.url}
+                  href={item.url}
                   className="text-foreground/90 hover:text-primary py-2 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -176,19 +178,19 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div>
               <h4 className="font-heading font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
-                <li><Link to="/" className="text-foreground/70 hover:text-primary">Home</Link></li>
-                <li><Link to="/blog" className="text-foreground/70 hover:text-primary">Blog</Link></li>
-                <li><Link to="/guides" className="text-foreground/70 hover:text-primary">Guides</Link></li>
-                <li><Link to="/reviews" className="text-foreground/70 hover:text-primary">Reviews</Link></li>
+                <li><Link href="/" className="text-foreground/70 hover:text-primary">Home</Link></li>
+                <li><Link href="/blog" className="text-foreground/70 hover:text-primary">Blog</Link></li>
+                <li><Link href="/guides" className="text-foreground/70 hover:text-primary">Guides</Link></li>
+                <li><Link href="/reviews" className="text-foreground/70 hover:text-primary">Reviews</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-heading font-semibold mb-4">Resources</h4>
               <ul className="space-y-2">
-                <li><Link to="/recommended-gear" className="text-foreground/70 hover:text-primary">Recommended Gear</Link></li>
-                <li><Link to="/about" className="text-foreground/70 hover:text-primary">About Us</Link></li>
-                <li><Link to="/contact" className="text-foreground/70 hover:text-primary">Contact</Link></li>
+                <li><Link href="/recommended-gear" className="text-foreground/70 hover:text-primary">Recommended Gear</Link></li>
+                <li><Link href="/about" className="text-foreground/70 hover:text-primary">About Us</Link></li>
+                <li><Link href="/contact" className="text-foreground/70 hover:text-primary">Contact</Link></li>
                 <li><a href="#" className="text-foreground/70 hover:text-primary">Privacy Policy</a></li>
               </ul>
             </div>

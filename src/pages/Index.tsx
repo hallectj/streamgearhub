@@ -1,6 +1,13 @@
-import { Link } from "react-router-dom";
+'use client'
+
+import Link from "next/link"; // Changed from React Router Link
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight } from "lucide-react";
+
+// Make sure all Link components use href instead of to
+// <Link href="/path">...</Link>
 import ArticleCard from "@/components/ArticleCard";
 import ProductCard from "@/components/ProductCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
@@ -78,10 +85,10 @@ const Index = () => {
               </p>
               <div className="flex space-x-4">
                 <Button asChild size="lg">
-                  <Link to="/blog">Explore Blog</Link>
+                  <Link href="/blog">Explore Blog</Link>
                 </Button>
                 <Button asChild variant="secondary" size="lg">
-                  <Link to="/guides">View Guides</Link>
+                  <Link href="/guides">View Guides</Link>
                 </Button>
               </div>
             </div>
@@ -132,8 +139,8 @@ const Index = () => {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <Button variant="outline">
-              <Link to="/recommended-gear">View All Recommended Gear</Link>
+            <Button asChild variant="outline">
+              <Link href="/recommended-gear">View All Recommended Gear</Link>
             </Button>
           </div>
         </div>

@@ -1,4 +1,7 @@
+'use client'
 
+// If this component uses Link, make sure it's from Next.js
+import Link from "next/link";
 import React from 'react';
 import { Star } from 'lucide-react';
 

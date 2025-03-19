@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+'use client'
+
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
@@ -85,7 +87,7 @@ const RecommendedGear = () => {
             {gearCategories.map((category) => (
               <Link 
                 key={category.id} 
-                to={category.url}
+                href={category.url}
                 className="group"
               >
                 <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-lg">
@@ -149,7 +151,7 @@ const RecommendedGear = () => {
               If you're just getting started, check out our beginner's guide to building your first streaming setup.
             </p>
             <Button className="mt-6" asChild>
-              <Link to="/guides/streaming-setup-for-beginners">Read Beginner's Guide</Link>
+              <Link href="/guides/streaming-setup-for-beginners">Read Beginner's Guide</Link>
             </Button>
           </div>
         </div>

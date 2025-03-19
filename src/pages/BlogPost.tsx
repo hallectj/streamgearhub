@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -79,8 +81,8 @@ const blogData = {
   }
 };
 
-const BlogPost = () => {
-  const { slug } = useParams<{ slug: string }>();
+// Update the component to accept slug as a prop
+const BlogPost = ({ slug }: { slug?: string }) => {
   const [post, setPost] = useState<any>(null);
   
   useEffect(() => {
@@ -101,7 +103,7 @@ const BlogPost = () => {
           <h1>Post not found</h1>
           <p className="mt-4">The blog post you're looking for doesn't exist.</p>
           <Button asChild className="mt-6">
-            <Link to="/blog">Back to Blog</Link>
+            <Link href="/blog">Back to Blog</Link>
           </Button>
         </div>
       </MainLayout>
@@ -115,7 +117,7 @@ const BlogPost = () => {
           {/* Back navigation */}
           <div className="mb-8">
             <Button variant="ghost" asChild className="gap-2">
-              <Link to="/blog">
+              <Link href="/blog">
                 <ArrowLeft size={16} />
                 Back to Blog
               </Link>
