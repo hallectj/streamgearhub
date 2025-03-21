@@ -1,10 +1,126 @@
-import GuideDetail from "@/pages/GuideDetail";
+import { Metadata } from 'next';
 import { notFound } from "next/navigation";
+import GuideDetailDisplay from "../../../components/GuideDetailDisplay";
+
+// Fetch the guide data on the server
+async function getGuide(slug: string) {
+  try {
+    const response = await fetch(
+      `http://localhost/mylocalwp/wp-json/wp/v2/guides?slug=${slug}&_embed`,
+      { next: { revalidate: 3600 } } // Revalidate every hour
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch guide: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.length) {
+      return null;
+    }
+    
+    const guide = data[0];
+    
+    // Get featured image if available
+    let featuredImage = "/placeholder.svg";
+    if (guide.uagb_featured_image_src && guide.uagb_featured_image_src.full) {
+      featuredImage = guide.uagb_featured_image_src.full[0];
+    } else if (guide._embedded && 
+        guide._embedded['wp:featuredmedia'] && 
+        guide._embedded['wp:featuredmedia'][0] &&
+        guide._embedded['wp:featuredmedia'][0].source_url) {
+      featuredImage = guide._embedded['wp:featuredmedia'][0].source_url;
+    }
+    
+    // Calculate read time (rough estimate)
+    const wordCount = guide.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
+    
+    // Determine difficulty (this would need to be added as custom field in WordPress)
+    // For now, we'll randomly assign a difficulty
+    const difficulties = ["Beginner", "Intermediate", "Advanced"];
+    const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+    
+    return {
+      title: guide.title.rendered,
+      content: guide.content.rendered,
+      excerpt: guide.excerpt.rendered,
+      date: new Date(guide.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+      slug: guide.slug,
+      featuredImage,
+      difficulty,
+      readTime,
+      relatedProducts: [
+        {
+          title: "Elgato Stream Deck MK.2",
+          price: "$149.99",
+          image: "/placeholder.svg",
+          rating: 4.8,
+          amazonUrl: "https://amazon.com",
+          description: "Customize your stream with 15 LCD keys",
+        },
+        {
+          title: "Shure SM7B Vocal Microphone",
+          price: "$399.00",
+          image: "/placeholder.svg",
+          rating: 4.9,
+          amazonUrl: "https://amazon.com",
+          description: "Industry standard vocal microphone",
+        },
+      ],
+    };
+  } catch (error) {
+    console.error('Error fetching guide:', error);
+    return null;
+  }
+}
+
+// Generate metadata for the page
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  if (!params.slug) {
+    return {
+      title: 'Guide Not Found | StreamGearHub',
+      description: 'The requested guide could not be found.'
+    };
+  }
+  
+  const guide = await getGuide(params.slug);
+  
+  if (!guide) {
+    return {
+      title: 'Guide Not Found | StreamGearHub',
+      description: 'The requested guide could not be found.'
+    };
+  }
+  
+  return {
+    title: `${guide.title} | StreamGearHub Guides`,
+    description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+    openGraph: {
+      title: guide.title,
+      description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+      images: [guide.featuredImage],
+      type: 'article',
+    },
+    metadataBase: new URL('http://localhost:3000'),
+  };
+}
 
 export default async function GuideDetailPage({ params }: { params: { slug: string } }) {
   if (!params.slug) {
     return notFound();
   }
   
-  return <GuideDetail slug={params.slug} />;
+  const guide = await getGuide(params.slug);
+  
+  if (!guide) {
+    return notFound();
+  }
+  
+  return <GuideDetailDisplay guide={guide} />;
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Calendar, User, Clock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -70,72 +70,13 @@ const GuideCard = ({ title, excerpt, date, slug, featuredImage, difficulty, read
   );
 };
 
-const Guides = () => {
-  const [guides, setGuides] = useState<GuideProps[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState("All");
+interface GuidesDisplayProps {
+  initialGuides: GuideProps[];
+}
 
-  useEffect(() => {
-    const fetchGuides = async () => {
-      try {
-        // Fetch guides from WordPress
-        const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/guides?_embed');
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch guides: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Transform WordPress data to our format
-        const formattedGuides = data.map((guide: any) => {
-          // Get featured image if available
-          let featuredImage = "/placeholder.svg";
-          if (guide.uagb_featured_image_src && guide.uagb_featured_image_src.full) {
-            featuredImage = guide.uagb_featured_image_src.full[0];
-          } else if (guide._embedded && 
-              guide._embedded['wp:featuredmedia'] && 
-              guide._embedded['wp:featuredmedia'][0] &&
-              guide._embedded['wp:featuredmedia'][0].source_url) {
-            featuredImage = guide._embedded['wp:featuredmedia'][0].source_url;
-          }
-          
-          // Calculate read time (rough estimate)
-          const wordCount = guide.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
-          const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
-          
-          // Determine difficulty (this would need to be added as custom field in WordPress)
-          // For now, we'll randomly assign a difficulty
-          const difficulties = ["Beginner", "Intermediate", "Advanced"];
-          const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
-          
-          return {
-            title: guide.title.rendered,
-            excerpt: guide.excerpt.rendered,
-            date: new Date(guide.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            }),
-            slug: guide.slug,
-            featuredImage,
-            difficulty,
-            readTime
-          };
-        });
-        
-        setGuides(formattedGuides);
-      } catch (err) {
-        console.error('Error fetching guides:', err);
-        setError('Failed to load guides. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchGuides();
-  }, []);
+const GuidesDisplay = ({ initialGuides }: GuidesDisplayProps) => {
+  const [guides] = useState<GuideProps[]>(initialGuides);
+  const [activeFilter, setActiveFilter] = useState("All");
 
   // Filter guides based on active filter
   const filteredGuides = activeFilter === "All" 
@@ -165,31 +106,11 @@ const Guides = () => {
           ))}
         </div>
         
-        {loading && (
-          <div className="text-center py-12">
-            <p>Loading guides...</p>
-          </div>
-        )}
-        
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-red-500">{error}</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              className="mt-4"
-            >
-              Try Again
-            </Button>
-          </div>
-        )}
-        
-        {!loading && !error && filteredGuides.length === 0 && (
+        {filteredGuides.length === 0 ? (
           <div className="text-center py-12">
             <p>No guides found for the selected difficulty level.</p>
           </div>
-        )}
-        
-        {!loading && !error && filteredGuides.length > 0 && (
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGuides.map((guide, index) => (
               <GuideCard key={index} {...guide} />
@@ -201,4 +122,4 @@ const Guides = () => {
   );
 };
 
-export default Guides;
+export default GuidesDisplay;

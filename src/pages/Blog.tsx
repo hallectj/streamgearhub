@@ -1,240 +1,180 @@
-
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-// Remove duplicate import since it's already imported below
-import { Input } from "@/components/ui/input";
+import { ArrowRight, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
-import NewsletterSignup from "@/components/NewsletterSignup";
-
-import ArticleCard from "@/components/ArticleCard";
-import ProductCard from "@/components/ProductCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MainLayout from "@/layouts/MainLayout";
 
-// Mock blog data
-const blogPosts = [
-  {
-    slug: "best-capture-cards",
-    title: "Best Capture Cards for Streaming in 2023",
-    excerpt: "Discover the top capture cards that will give you lag-free, high-quality streams across all platforms.",
-    category: "Gear",
-    image: "/placeholder.svg",
-    date: "August 28, 2023"
-  },
-  {
-    slug: "grow-your-twitch-channel",
-    title: "How to Grow Your Twitch Channel from Zero",
-    excerpt: "A complete guide with proven strategies to build your audience and create a thriving Twitch community.",
-    category: "Guide",
-    image: "/placeholder.svg",
-    date: "August 15, 2023"
-  },
-  {
-    slug: "professional-obs-setup",
-    title: "Setting Up OBS for Professional Streams",
-    excerpt: "Learn how to configure OBS for optimal performance and create professional-looking scenes and transitions.",
-    category: "Tutorial",
-    image: "/placeholder.svg",
-    date: "August 5, 2023"
-  },
-  {
-    slug: "best-streaming-microphones",
-    title: "Top 5 Streaming Microphones for Every Budget",
-    excerpt: "From budget-friendly to pro-level, find the perfect microphone to make your voice sound crystal clear.",
-    category: "Gear",
-    image: "/placeholder.svg",
-    date: "July 22, 2023"
-  },
-  {
-    slug: "streaming-pc-build-guide",
-    title: "Ultimate Streaming PC Build Guide for 2023",
-    excerpt: "Component recommendations and build instructions for a PC that can handle both gaming and streaming.",
-    category: "Build Guide",
-    image: "/placeholder.svg",
-    date: "July 15, 2023"
-  },
-  {
-    slug: "monetize-your-stream",
-    title: "10 Ways to Monetize Your Stream Beyond Subscriptions",
-    excerpt: "Diversify your income streams with these proven monetization strategies for content creators.",
-    category: "Business",
-    image: "/placeholder.svg",
-    date: "July 8, 2023"
-  }
-];
+// Blog post card component
+interface BlogPostProps {
+  title: string;
+  excerpt: string;
+  date: string;
+  author: string;
+  slug: string;
+  featuredImage?: string;
+  categories: string[];
+}
 
-// Recent posts (for sidebar)
-const recentPosts = blogPosts.slice(0, 3);
-
-// Recommended products (for sidebar)
-const recommendedProducts = [
-  {
-    image: "/placeholder.svg",
-    title: "Elgato Stream Deck MK.2",
-    price: "$149.99",
-    rating: 4.8,
-    amazonUrl: "https://amazon.com",
-    description: "Customize your stream with 15 LCD keys"
-  },
-  {
-    image: "/placeholder.svg",
-    title: "Shure SM7B Microphone",
-    price: "$399.00",
-    rating: 4.9,
-    amazonUrl: "https://amazon.com",
-    description: "Industry standard vocal microphone"
-  }
-];
+const BlogPostCard = ({ title, excerpt, date, author, slug, featuredImage, categories }: BlogPostProps) => {
+  return (
+    <div className="card-hover rounded-lg overflow-hidden bg-card border border-muted flex flex-col h-full">
+      <div className="relative">
+        <img 
+          src={featuredImage || "/placeholder.svg"} 
+          alt={title}
+          className="w-full h-48 object-cover"
+        />
+        {categories && categories.length > 0 && (
+          <div className="absolute top-4 left-4">
+            <span className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
+              {categories[0]}
+            </span>
+          </div>
+        )}
+      </div>
+      
+      <div className="p-6 flex-grow flex flex-col">
+        <div className="flex items-center text-sm text-muted-foreground mb-2">
+          <div className="flex items-center mr-4">
+            <User size={14} className="mr-1" />
+            <span>{author}</span>
+          </div>
+          <div className="flex items-center">
+            <Calendar size={14} className="mr-1" />
+            <span>{date}</span>
+          </div>
+        </div>
+        
+        <h3 className="font-semibold text-xl mb-2">{title}</h3>
+        <div 
+          className="text-muted-foreground mb-4 flex-grow"
+          dangerouslySetInnerHTML={{ __html: excerpt }}
+        />
+        
+        <Button asChild variant="outline" className="mt-auto w-full justify-between">
+          <Link href={`/blog/${slug}`}>
+            Read Article
+            <ArrowRight size={16} />
+          </Link>
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const Blog = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState<BlogPostProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter posts based on search query
-  const filteredPosts = searchQuery 
-    ? blogPosts.filter(post => 
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : blogPosts;
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        // Replace with your actual WordPress URL
+        const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/posts?_embed');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch posts: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Transform WordPress data to our format
+        const formattedPosts = data.map((post: any) => {
+          // Get featured image if available
+          let featuredImage = "/placeholder.svg";
+          if (post._embedded && 
+              post._embedded['wp:featuredmedia'] && 
+              post._embedded['wp:featuredmedia'][0] &&
+              post._embedded['wp:featuredmedia'][0].source_url) {
+            featuredImage = post._embedded['wp:featuredmedia'][0].source_url;
+          }
+          
+          // Get author name
+          let authorName = "Unknown Author";
+          if (post._embedded && 
+              post._embedded['author'] && 
+              post._embedded['author'][0] &&
+              post._embedded['author'][0].name) {
+            authorName = post._embedded['author'][0].name;
+          }
+          
+          // Get categories
+          let categories: string[] = [];
+          if (post._embedded && 
+              post._embedded['wp:term'] && 
+              post._embedded['wp:term'][0]) {
+            categories = post._embedded['wp:term'][0].map((term: any) => term.name);
+          }
+          
+          return {
+            title: post.title.rendered,
+            excerpt: post.excerpt.rendered,
+            date: new Date(post.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }),
+            author: authorName,
+            slug: post.slug,
+            featuredImage,
+            categories
+          };
+        });
+        
+        setPosts(formattedPosts);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError('Failed to load blog posts. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPosts();
+  }, []);
 
   return (
     <MainLayout>
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-purple-500/5 to-primary/10 py-20">
-        <div className="container max-w-7xl mx-auto px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
-                Streaming Insights
-              </span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Expert guides, reviews, and tips for elevating your streaming game
-            </p>
-            
-            {/* Search bar */}
-            <div className="flex max-w-md">
-              <Input 
-                type="search" 
-                placeholder="Search articles..." 
-                className="mr-2"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Button type="submit" className="bg-primary hover:bg-primary/90">
-                <Search className="mr-2 h-4 w-4" />
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <div className="container max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content - Article listings */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-6">Latest Articles</h2>
-            
-            {filteredPosts.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl mb-2">No articles found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search query
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredPosts.map((post) => (
-                  <ArticleCard 
-                    key={post.slug}
-                    image={post.image} 
-                    title={post.title}
-                    excerpt={post.excerpt}
-                    category={post.category}
-                    url={`/blog/${post.slug}`}
-                    date={post.date}
-                  />
-                ))}
-              </div>
-            )}
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">Blog</h1>
+        <p className="text-xl text-muted-foreground mb-12">
+          Latest news, guides, and insights for streamers
+        </p>
+        
+        {loading && (
+          <div className="text-center py-12">
+            <p>Loading blog posts...</p>
           </div>
-          
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-8">
-            {/* In case you missed it */}
-            <Card>
-              <CardHeader>
-                <CardTitle>In Case You Missed It</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recentPosts.map((post) => (
-                  <div key={post.slug} className="flex items-start space-x-4">
-                    <img 
-                      src={post.image} 
-                      alt={post.title}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                    <div>
-                      <Link 
-                        href={`/blog/${post.slug}`}
-                        className="font-medium hover:text-primary line-clamp-2"
-                      >
-                        {post.title}
-                      </Link>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {post.date}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-            
-            {/* Recommended gear */}
-            <div>
-              <h3 className="text-lg font-bold mb-4">Recommended Gear</h3>
-              <div className="space-y-4">
-                {recommendedProducts.map((product, index) => (
-                  <ProductCard
-                    key={index}
-                    image={product.image}
-                    title={product.title}
-                    price={product.price}
-                    rating={product.rating}
-                    amazonUrl={product.amazonUrl}
-                    description={product.description}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            {/* Newsletter */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Subscribe to Our Newsletter</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Get the latest streaming tips and gear reviews delivered to your inbox.
-                </p>
-                <form className="space-y-2">
-                  <Input 
-                    type="email" 
-                    placeholder="Your email address" 
-                    className="w-full"
-                  />
-                  <Button className="w-full">Subscribe</Button>
-                </form>
-              </CardContent>
-            </Card>
+        )}
+        
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-500">{error}</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-4"
+            >
+              Try Again
+            </Button>
           </div>
-        </div>
+        )}
+        
+        {!loading && !error && posts.length === 0 && (
+          <div className="text-center py-12">
+            <p>No blog posts found.</p>
+          </div>
+        )}
+        
+        {!loading && !error && posts.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post, index) => (
+              <BlogPostCard key={index} {...post} />
+            ))}
+          </div>
+        )}
       </div>
     </MainLayout>
   );
