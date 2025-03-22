@@ -1,12 +1,25 @@
 import { Metadata } from 'next';
 import GuidesDisplay from '@/components/GuidesDisplay';
 
+const getDifficulty = (guide) => {
+  if (!guide?._embedded?.['wp:term']) {
+    return 'beginner'; // Fallback if no terms are embedded
+  }
+
+  const difficultyTerm = guide._embedded['wp:term']
+    .flat() // Flatten the array of term arrays
+    .find(term => term.taxonomy === 'difficulty');
+
+  return difficultyTerm?.name || 'beginner'; // Use term name or fallback
+};
+
 // Fetch guides on the server
 async function getGuides() {
   try {
     const response = await fetch(
       'http://localhost/mylocalwp/wp-json/wp/v2/guides?_embed',
-      { next: { revalidate: 3600 } } // Revalidate every hour
+      //{ next: { revalidate: 3600 } } // Revalidate every hour
+      { cache: 'no-store' }
     );
     
     if (!response.ok) {
@@ -30,11 +43,7 @@ async function getGuides() {
       // Calculate read time (rough estimate)
       const wordCount = guide.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
       const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
-      
-      // Determine difficulty (this would need to be added as custom field in WordPress)
-      // For now, we'll randomly assign a difficulty
-      const difficulties = ["Beginner", "Intermediate", "Advanced"];
-      const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+      const difficulty = getDifficulty(guide);
       
       return {
         title: guide.title.rendered,

@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, ThumbsUp, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/ProductCard";
 import MainLayout from "@/layouts/MainLayout";
@@ -29,6 +30,51 @@ interface GuideDetailDisplayProps {
 }
 
 const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
+  const [activeSection, setActiveSection] = useState<string>("");
+
+  useEffect(() => {
+    const sections = document.querySelectorAll('h2, h3, h4');
+    const sectionIds = Array.from(sections).map(section => section.id);
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 200; // Offset to trigger a bit earlier
+
+      // Find the current section
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section.getBoundingClientRect().top + window.scrollY <= scrollPosition) {
+          setActiveSection(section.id);
+          break;
+        }
+      }
+
+      // If we're at the top of the page and no section is active
+      if (scrollPosition < 300 && sectionIds.length > 0) {
+        setActiveSection(sectionIds[0]);
+      }
+    };
+
+    // Initial check
+    handleScroll();
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Table of contents items
+  const tocItems = [
+    { id: "introduction", label: "Introduction" },
+    { id: "requirements", label: "Requirements" },
+    { id: "step-1", label: "Step 1: Getting Started" },
+    { id: "step-2", label: "Step 2: Configuration" },
+    { id: "conclusion", label: "Conclusion" }
+  ];
+
   return (
     <MainLayout>
       <div className="min-h-screen">
@@ -96,31 +142,25 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
                 <div className="bg-card rounded-lg p-6 border border-border">
                   <h3 className="font-bold mb-4">Table of Contents</h3>
                   <ul className="space-y-2">
-                    <li>
-                      <a href="#introduction" className="text-muted-foreground hover:text-primary transition-colors">
-                        Introduction
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#requirements" className="text-muted-foreground hover:text-primary transition-colors">
-                        Requirements
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#step-1" className="text-muted-foreground hover:text-primary transition-colors">
-                        Step 1: Getting Started
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#step-2" className="text-muted-foreground hover:text-primary transition-colors">
-                        Step 2: Configuration
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#conclusion" className="text-muted-foreground hover:text-primary transition-colors">
-                        Conclusion
-                      </a>
-                    </li>
+                    {tocItems.map((item) => (
+                      <li key={item.id} className="flex items-center">
+                        {activeSection === item.id && (
+                          <ChevronRight size={16} className="text-primary mr-1 flex-shrink-0" />
+                        )}
+                        <a 
+                          href={`#${item.id}`} 
+                          className={`${
+                            activeSection === item.id 
+                              ? "text-primary font-medium" 
+                              : "text-muted-foreground"
+                          } hover:text-primary transition-colors ${
+                            activeSection === item.id ? "" : "ml-6"
+                          }`}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 

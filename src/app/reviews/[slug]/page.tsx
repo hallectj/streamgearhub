@@ -1,10 +1,11 @@
 import ReviewDetail from "@/pages/ReviewDetail";
 import { notFound } from "next/navigation";
 
-export default async function ReviewDetailPage({ params }: { params: { slug: string } }) {
-  if (!params.slug) {
+export default async function ReviewDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  if (!resolvedParams.slug) {
     return notFound();
   }
   
-  return <ReviewDetail slug={params.slug} />;
+  return <ReviewDetail slug={resolvedParams.slug} />;
 }

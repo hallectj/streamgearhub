@@ -2,12 +2,24 @@ import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import GuideDetailDisplay from "../../../components/GuideDetailDisplay";
 
+const getDifficulty = (guide) => {
+  if (!guide?._embedded?.['wp:term']) {
+    return 'beginner'; // Fallback if no terms are embedded
+  }
+
+  const difficultyTerm = guide._embedded['wp:term']
+    .flat() // Flatten the array of term arrays
+    .find(term => term.taxonomy === 'difficulty');
+
+  return difficultyTerm?.name || 'beginner'; // Use term name or fallback
+};
+
 // Fetch the guide data on the server
 async function getGuide(slug: string) {
   try {
     const response = await fetch(
       `http://localhost/mylocalwp/wp-json/wp/v2/guides?slug=${slug}&_embed`,
-      { next: { revalidate: 3600 } } // Revalidate every hour
+      //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     
     if (!response.ok) {
@@ -21,7 +33,7 @@ async function getGuide(slug: string) {
     }
     
     const guide = data[0];
-    
+
     // Get featured image if available
     let featuredImage = "/placeholder.svg";
     if (guide.uagb_featured_image_src && guide.uagb_featured_image_src.full) {
@@ -36,11 +48,8 @@ async function getGuide(slug: string) {
     // Calculate read time (rough estimate)
     const wordCount = guide.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
     const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
-    
-    // Determine difficulty (this would need to be added as custom field in WordPress)
-    // For now, we'll randomly assign a difficulty
-    const difficulties = ["Beginner", "Intermediate", "Advanced"];
-    const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+
+    const difficulty = getDifficulty(guide);
     
     return {
       title: guide.title.rendered,
@@ -80,16 +89,16 @@ async function getGuide(slug: string) {
   }
 }
 
-// Generate metadata for the page
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  if (!params.slug) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  if (!resolvedParams.slug) {
     return {
       title: 'Guide Not Found | StreamGearHub',
       description: 'The requested guide could not be found.'
     };
   }
   
-  const guide = await getGuide(params.slug);
+  const guide = await getGuide(resolvedParams.slug);
   
   if (!guide) {
     return {
@@ -111,12 +120,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function GuideDetailPage({ params }: { params: { slug: string } }) {
-  if (!params.slug) {
+export default async function GuideDetailPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
+  const resolvedParams = await params;
+ 
+  if (!resolvedParams.slug) {
     return notFound();
   }
   
-  const guide = await getGuide(params.slug);
+  const guide = await getGuide(resolvedParams.slug);
   
   if (!guide) {
     return notFound();
