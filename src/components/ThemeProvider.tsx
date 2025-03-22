@@ -8,6 +8,7 @@ type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
+  disableTransitionOnChange?: boolean;
 };
 
 type ThemeProviderState = {
@@ -23,12 +24,16 @@ export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "streamgearhub-theme",
+  disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => {
-      if (typeof localStorage !== 'undefined') {
-        return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const storedTheme = localStorage.getItem(storageKey);
+        if (storedTheme && (storedTheme === 'dark' || storedTheme === 'light' || storedTheme === 'system')) {
+          return storedTheme as Theme;
+        }
       }
       return defaultTheme;
     }
@@ -51,6 +56,22 @@ export function ThemeProvider({
     }
     
     root.classList.add(theme);
+  }, [theme]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      const handleChange = () => {
+        const root = window.document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(mediaQuery.matches ? "dark" : "light");
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
   }, [theme]);
 
   const value = {

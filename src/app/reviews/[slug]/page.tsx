@@ -1,4 +1,4 @@
-import ReviewDetail from "@/pages/ReviewDetail";
+import ReviewDetail from "@/components/ReviewDetail";
 import { notFound } from "next/navigation";
 
 export default async function ReviewDetailPage({ params }: { params: Promise<{ slug: string }> }) {
