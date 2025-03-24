@@ -54,7 +54,9 @@ async function getGuide(slug: string) {
     return {
       title: guide.title.rendered,
       content: guide.content.rendered,
-      excerpt: guide.excerpt.rendered,
+      excerpt: guide.excerpt.rendered
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .substring(0, 150) + '...', // Limit to 150 characters and add ellipsis
       date: new Date(guide.date).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -109,10 +111,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   return {
     title: `${guide.title} | StreamGearHub Guides`,
-    description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+    description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 100),
     openGraph: {
       title: guide.title,
-      description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+      description: guide.excerpt.replace(/<[^>]*>/g, '').substring(0, 100),
       images: [guide.featuredImage],
       type: 'article',
     },

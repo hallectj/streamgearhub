@@ -103,6 +103,10 @@
   p {
     @apply leading-7;
   }
+  
+  a:not([class]) {
+    @apply text-primary hover:text-secondary underline underline-offset-2 font-medium transition-colors;
+  }
 }
 
 @layer components {

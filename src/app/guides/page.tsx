@@ -47,7 +47,9 @@ async function getGuides() {
       
       return {
         title: guide.title.rendered,
-        excerpt: guide.excerpt.rendered,
+        excerpt: guide.excerpt.rendered
+          .replace(/<[^>]*>/g, '') // Remove HTML tags
+          .substring(0, 150) + '...', // Limit to 150 characters and add ellipsis
         date: new Date(guide.date).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
