@@ -6,7 +6,8 @@ import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, ThumbsUp, ChevronRi
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/ProductCard";
 import MainLayout from "@/layouts/MainLayout";
-import './guide-content.css'; // We'll create this CSS file for styling the guide content
+import { ShareButtons } from "@/components/ShareButtons";
+import '../styles/content-styles.css'; // Import the shared styles
 
 interface GuideDetailDisplayProps {
   guide: {
@@ -120,19 +121,9 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
               
               <div className="mt-10 pt-6 border-t border-border flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    <Share2 size={16} className="mr-1" />
-                    Share
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Bookmark size={16} className="mr-1" />
-                    Save
-                  </Button>
+                <ShareButtons title={guide.title} url={`${window.location.origin}/guides/${guide.slug}`} />
                 </div>
-                <Button variant="ghost" size="sm">
-                  <ThumbsUp size={16} className="mr-1" />
-                  Helpful
-                </Button>
+
               </div>
             </div>
 

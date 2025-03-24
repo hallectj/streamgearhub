@@ -1,9 +1,11 @@
 'use client'
 
 import Link from "next/link";
-import { ArrowLeft, Calendar, User, Clock, Tag, Share2, Bookmark, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
+import { ShareButtons } from "@/components/ShareButtons";
+import { usePathname } from 'next/navigation';
 import '../styles/content-styles.css'; // Import the shared styles
 
 interface BlogPostDisplayProps {
@@ -29,6 +31,11 @@ interface BlogPostDisplayProps {
 }
 
 const BlogPostDisplay = ({ post }: BlogPostDisplayProps) => {
+  const pathname = usePathname();
+  const url = typeof window !== 'undefined' 
+    ? `${window.location.origin}${pathname}` 
+    : 'https://streamgearhub.com';
+
   return (
     <MainLayout>
       <div className="min-h-screen">
@@ -91,20 +98,7 @@ const BlogPostDisplay = ({ post }: BlogPostDisplayProps) => {
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Share2 size={16} className="mr-1" />
-                      Share
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Bookmark size={16} className="mr-1" />
-                      Save
-                    </Button>
-                  </div>
-                  <Button variant="ghost" size="sm">
-                    <ThumbsUp size={16} className="mr-1" />
-                    Helpful
-                  </Button>
+                  <ShareButtons title={post.title} url={url} />
                 </div>
               </div>
             </div>

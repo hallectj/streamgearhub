@@ -11,7 +11,7 @@ async function getRecentPosts() {
   try {
     const response = await fetch(
       'http://localhost/mylocalwp/wp-json/wp/v2/posts?_embed&per_page=3',
-      { next: { revalidate: 3600 } } // Revalidate every hour
+      //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     
     if (!response.ok) {

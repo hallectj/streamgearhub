@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowRight, Calendar, User, Clock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
+import { ShareButtons } from "@/components/ShareButtons";
+import { usePathname } from 'next/navigation';
 
 // Guide card component interface
 interface GuideProps {
@@ -15,9 +17,15 @@ interface GuideProps {
   featuredImage?: string;
   difficulty?: string;
   readTime?: string;
+  url?: string;
 }
 
-const GuideCard = ({ title, excerpt, date, slug, featuredImage, difficulty, readTime }: GuideProps) => {
+const GuideCard = ({ title, excerpt, date, slug, featuredImage, difficulty, readTime, url }: GuideProps) => {
+  // Generate the full URL if not provided
+  const pathname = usePathname();
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://streamgearhub.com';
+  const fullUrl = url || `${baseUrl}/guides/${slug}`;
+  
   return (
     <div className="card-hover rounded-lg overflow-hidden bg-card border border-muted flex flex-col h-full">
       <div className="relative">
@@ -59,12 +67,16 @@ const GuideCard = ({ title, excerpt, date, slug, featuredImage, difficulty, read
           dangerouslySetInnerHTML={{ __html: excerpt }}
         />
         
-        <Button asChild variant="outline" className="mt-auto w-full justify-between">
-          <Link href={`/guides/${slug}`}>
-            Read Guide
-            <ArrowRight size={16} />
-          </Link>
-        </Button>
+        <div className="flex flex-col gap-3 mt-auto">
+          <ShareButtons title={title} url={fullUrl} />
+          
+          <Button asChild variant="outline" className="w-full justify-between">
+            <Link href={`/guides/${slug}`}>
+              Read Guide
+              <ArrowRight size={16} />
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

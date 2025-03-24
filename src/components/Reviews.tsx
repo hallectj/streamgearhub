@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown, Star } from "lucide-react";
 import MainLayout from "@/layouts/MainLayout";
@@ -250,7 +250,131 @@ const reviewsData = {
   ]
 };
 
-const Reviews = () => {
+// Interface for WordPress API response
+interface WordPressReview {
+  id: number;
+  slug: string;
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  date: string;
+  star_rating: number;
+  price: number;
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{
+      source_url: string;
+    }>;
+    'wp:term'?: Array<Array<{
+      id: number;
+      name: string;
+      slug: string;
+    }>>;
+  };
+}
+
+interface ReviewsProps {
+  initialReviews: WordPressReview[];
+}
+
+const Reviews = ({ initialReviews = [] }: ReviewsProps) => {
+  const [reviewsByCategory, setReviewsByCategory] = useState<Record<string, ReviewCardProps[]>>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(initialReviews.length === 0);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If we have initial reviews from the server, process them
+    if (initialReviews.length > 0) {
+      processReviews(initialReviews);
+      return;
+    }
+
+    // Otherwise fetch them client-side
+    const fetchReviews = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/review?_embed&per_page=100');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch reviews');
+        }
+        
+        const data: WordPressReview[] = await response.json();
+        processReviews(data);
+        
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setError('Failed to load reviews');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchReviews();
+  }, [initialReviews]);
+
+  // Function to process reviews data
+  const processReviews = (data: WordPressReview[]) => {
+    const reviewsByCategory: Record<string, ReviewCardProps[]> = {};
+    const categorySet = new Set<string>();
+    
+    data.forEach(review => {
+      // Get the category from embedded terms
+      const category = review._embedded?.['wp:term']?.[0]?.[0]?.name || 'Uncategorized';
+      categorySet.add(category);
+      
+      // Get the featured image URL
+      const imageUrl = review._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/placeholder.svg';
+      
+      // Format price as USD
+      const formattedPrice = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(review.price);
+      
+      // Create a review card object
+      const reviewCard: ReviewCardProps = {
+        image: imageUrl,
+        title: review.title.rendered,
+        price: formattedPrice,
+        rating: review.star_rating,
+        snippet: review.excerpt.rendered.replace(/<\/?[^>]+(>|$)/g, "").substring(0, 150) + "...",
+        slug: review.slug
+      };
+      
+      // Add to the category
+      if (!reviewsByCategory[category]) {
+        reviewsByCategory[category] = [];
+      }
+      reviewsByCategory[category].push(reviewCard);
+    });
+    
+    setReviewsByCategory(reviewsByCategory);
+    setCategories(Array.from(categorySet));
+  };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="container max-w-7xl mx-auto px-4 py-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">Streaming Gear Reviews</h1>
+          <p className="text-xl mb-8">Loading reviews...</p>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (error && Object.keys(reviewsByCategory).length === 0) {
+    return (
+      <MainLayout>
+        <div className="container max-w-7xl mx-auto px-4 py-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">Streaming Gear Reviews</h1>
+          <p className="text-xl text-red-500 mb-8">{error}</p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="container max-w-7xl mx-auto px-4 py-12">
@@ -259,11 +383,13 @@ const Reviews = () => {
           Honest, in-depth reviews of the best streaming equipment to elevate your content
         </p>
         
-        <CategorySection title="Microphones" reviews={reviewsData.microphones} />
-        <CategorySection title="Cameras" reviews={reviewsData.cameras} />
-        <CategorySection title="Capture Cards" reviews={reviewsData.captureCards} />
-        <CategorySection title="Gaming Chairs" reviews={reviewsData.gamingChairs} />
-        <CategorySection title="Laptops" reviews={reviewsData.laptops} />
+        {categories.map(category => (
+          <CategorySection 
+            key={category} 
+            title={category} 
+            reviews={reviewsByCategory[category] || []} 
+          />
+        ))}
       </div>
     </MainLayout>
   );

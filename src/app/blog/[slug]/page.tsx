@@ -7,7 +7,7 @@ async function getPost(slug: string) {
   try {
     const response = await fetch(
       `http://localhost/mylocalwp/wp-json/wp/v2/posts?slug=${slug}&_embed`,
-      { next: { revalidate: 3600 } } // Revalidate every hour
+      //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     
     if (!response.ok) {
