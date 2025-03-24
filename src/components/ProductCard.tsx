@@ -1,5 +1,5 @@
-import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ProductCardProps {
   image: string;
@@ -26,27 +26,27 @@ const ProductCard = ({ image, title, price, rating, amazonUrl, description }: Pr
   };
 
   return (
-    <div className="flex gap-3 p-3 rounded-lg border border-muted bg-card">
-      <div className="flex-shrink-0 w-20 h-20 bg-muted rounded flex items-center justify-center">
-        <img src={image} alt={title} className="max-w-full max-h-full p-1" />
+    <div className="flex gap-3 p-3 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors">
+      <div className="w-16 h-16 rounded bg-muted flex-shrink-0 overflow-hidden">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
       </div>
-      <div className="flex-grow min-w-0">
-        <h4 className="font-medium text-sm line-clamp-1">{title}</h4>
-        <div className="flex items-center mt-1 mb-1">
-          {renderStars()}
-          <span className="ml-1 text-xs text-muted-foreground">({rating})</span>
+      <div className="flex-1">
+        <h4 className="font-medium text-sm mb-1">{title}</h4>
+        <div className="flex items-center gap-1 mb-1">
+          <div className="flex">
+            {renderStars()}
+          </div>
+          <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
         </div>
-        <p className="text-sm font-bold text-primary">{price}</p>
-        <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{description}</p>
-        <Button 
-          asChild 
-          variant="link" 
-          className="h-auto p-0 text-xs mt-1"
-        >
-          <a href={amazonUrl} target="_blank" rel="noopener noreferrer">
-            View on Amazon
-          </a>
-        </Button>
+        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{description}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-primary">{price}</span>
+          <Button variant="outline" size="sm" asChild className="h-7 text-xs px-2">
+            <a href={amazonUrl} target="_blank" rel="noopener noreferrer">
+              View
+            </a>
+          </Button>
+        </div>
       </div>
     </div>
   );

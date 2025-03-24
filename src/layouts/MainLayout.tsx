@@ -34,6 +34,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     { name: "Guides", url: "/guides" },
     { name: "Reviews", url: "/reviews" },
     { name: "Recommended Gear", url: "/recommended-gear" },
+    { name: "Streamers", url: "/streamers" },
     { name: "About", url: "/about" },
     { name: "Contact", url: "mailto:hallectj@gmail.com" },
   ];
@@ -153,6 +154,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <li><Link href="/blog" className="text-foreground/70 hover:text-primary">Blog</Link></li>
                 <li><Link href="/guides" className="text-foreground/70 hover:text-primary">Guides</Link></li>
                 <li><Link href="/reviews" className="text-foreground/70 hover:text-primary">Reviews</Link></li>
+                <li><Link href="/streamers" className="text-foreground/70 hover:text-primary">Streamers</Link></li>
               </ul>
             </div>
             
