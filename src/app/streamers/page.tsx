@@ -1,73 +1,98 @@
 import { Metadata } from 'next';
 import MainLayout from '@/layouts/MainLayout';
-import StreamersList from '@/components/StreamersList';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Card, CardContent } from "@/components/ui/card";
+import { Twitch, Youtube, ExternalLink } from 'lucide-react';
+
+const placeholderImage = '../../public/ImageNotFound.png'
 
 export const metadata: Metadata = {
   title: 'Popular Streamers Setup | StreamGearHub',
   description: 'Discover the streaming gear used by your favorite content creators',
 };
 
-// This would eventually come from WordPress
-const streamers = [
-  {
-    name: "xQc",
-    slug: "xqc",
-    image: "https://pbs.twimg.com/media/F3C4nyTX0AAsn-G?format=jpg&name=medium",
-    platforms: ["twitch", "kick"],
-    categories: ["FPS", "Variety", "Just Chatting"]
-  },
-  {
-    name: "Ninja",
-    slug: "ninja",
-    image: "https://pbs.twimg.com/media/GglQLpNWcAAYBW5?format=jpg&name=large",
-    platforms: ["twitch", "youtube"],
-    categories: ["Fortnite", "FPS", "Battle Royale"]
-  },
-  {
-    name: "Pokimane",
-    slug: "pokimane",
-    image: "https://pbs.twimg.com/media/GVsADHCa8AQWscu?format=jpg&name=large",
-    platforms: ["twitch", "youtube"],
-    categories: ["Variety", "Just Chatting", "Gaming"]
-  },
-  {
-    name: "Shroud",
-    slug: "shroud",
-    image: "https://pbs.twimg.com/media/GikkHr0WAAEblwr?format=jpg&name=4096x4096",
-    platforms: ["twitch"],
-    categories: ["FPS", "Competitive", "Variety"]
-  },
-  {
-    name: "TimTheTatman",
-    slug: "timthetatman",
-    image: "https://static.wikia.nocookie.net/youtube/images/0/0f/TimTheTatman.jpg/revision/latest?cb=20221030153303",
-    platforms: ["youtube"],
-    categories: ["FPS", "Battle Royale", "Variety"]
-  },
-  {
-    name: "DrDisrespect",
-    slug: "drdisrespect",
-    image: "https://pbs.twimg.com/media/GlIRz5uXcAExAKR?format=jpg&name=large",
-    platforms: ["youtube"],
-    categories: ["FPS", "Battle Royale"]
-  },
-  {
-    name: "Valkyrae",
-    slug: "valkyrae",
-    image: "https://pbs.twimg.com/media/GAsehepbQAAm0KK?format=jpg&name=large",
-    platforms: ["youtube"],
-    categories: ["Variety", "Gaming"]
-  },
-  {
-    name: "Amouranth",
-    slug: "amouranth",
-    image: "https://pbs.twimg.com/media/Fw69Pp9WwAA0SA4?format=jpg&name=large",
-    platforms: ["twitch", "kick"],
-    categories: ["Just Chatting", "IRL"]
-  }
-];
+// Helper function to decode HTML entities
+const decodeHtmlEntities = (text: string): string => {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'")
+    .replace(/&#8216;/g, "'")  // Left single quotation mark
+    .replace(/&#8217;/g, "'")  // Right single quotation mark
+    .replace(/&#8220;/g, '"')  // Left double quotation mark
+    .replace(/&#8221;/g, '"')  // Right double quotation mark
+    .replace(/&nbsp;/g, ' ');
+};
 
-export default function StreamersPage() {
+// Fetch streamers from WordPress
+async function getStreamers() {
+  try {
+    const response = await fetch(
+      'http://localhost/mylocalwp/wp-json/wp/v2/streamer',
+      { cache: 'no-store' }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch streamers: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    return data.map((streamer: any) => {
+      // Extract categories
+      const categories = streamer.class_list
+        .filter((className: string) => className.startsWith('category-'))
+        .map((className: string) => {
+          // Convert "category-just-chatting" to "Just Chatting"
+          const category = className.replace('category-', '');
+          return category.split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        });
+      
+      // Get platforms from streamer_socials
+      const platforms = [];
+      if (streamer.streamer_socials) {
+        if (streamer.streamer_socials.twitch) platforms.push('twitch');
+        if (streamer.streamer_socials.youtube) platforms.push('youtube');
+        if (streamer.streamer_socials.kick) platforms.push('kick');
+      }
+      
+      // If no platforms found, default to twitch
+      if (platforms.length === 0) {
+        platforms.push('twitch');
+      }
+      
+      return {
+        name: streamer.title.rendered,
+        slug: streamer.slug,
+        image: streamer.streamer_other_picture || streamer.streamer_profile_picture || placeholderImage,
+        platforms: platforms,
+        categories: categories
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching streamers:', error);
+    // Fallback to static data if API fails
+    return [
+      {
+        name: "xQc",
+        slug: "xqc",
+        image: "https://pbs.twimg.com/media/F3C4nyTX0AAsn-G?format=jpg&name=medium",
+        platforms: ["twitch", "kick"],
+        categories: ["FPS", "Variety", "Just Chatting"]
+      },
+      // ... other static streamers
+    ];
+  }
+}
+
+export default async function StreamersPage() {
+  const streamers = await getStreamers();
+  
   return (
     <MainLayout>
       <div className="container max-w-7xl mx-auto px-4 py-12">
@@ -76,7 +101,46 @@ export default function StreamersPage() {
           Discover the gear used by your favorite content creators
         </p>
         
-        <StreamersList streamers={streamers} />
+        {/* Server-rendered streamers grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {streamers.map(streamer => (
+            <Link 
+              key={streamer.slug} 
+              href={streamer.slug ? `/streamers/${streamer.slug}` : '#'}
+            >
+              <Card className="overflow-hidden transition-all hover:shadow-md">
+                <div className="aspect-square relative">
+                  <Image 
+                    src={streamer.image} 
+                    alt={decodeHtmlEntities(streamer.name)} 
+                    fill 
+                    className="object-contain"
+                  />
+                </div>
+                <CardContent className="p-4">
+                  <h3 className="font-bold text-lg mb-2">{decodeHtmlEntities(streamer.name)}</h3>
+                  <div className="flex gap-2">
+                    {streamer.platforms.includes('twitch') && (
+                      <Twitch className="h-4 w-4 text-[#9146FF]" />
+                    )}
+                    {streamer.platforms.includes('youtube') && (
+                      <Youtube className="h-4 w-4 text-[#FF0000]" />
+                    )}
+                    {streamer.platforms.includes('kick') && (
+                      <ExternalLink className="h-4 w-4 text-[#53FC18]" />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+        
+        {streamers.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No streamers found.</p>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

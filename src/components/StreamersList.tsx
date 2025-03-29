@@ -19,6 +19,22 @@ interface StreamersListProps {
   streamers: Streamer[];
 }
 
+// Add this helper function to decode HTML entities
+// Replace the current decodeHtmlEntities function with this one
+const decodeHtmlEntities = (text: string): string => {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'")
+    .replace(/&#8216;/g, "'")  // Left single quotation mark
+    .replace(/&#8217;/g, "'")  // Right single quotation mark
+    .replace(/&#8220;/g, '"')  // Left double quotation mark
+    .replace(/&#8221;/g, '"')  // Right double quotation mark
+    .replace(/&nbsp;/g, ' ');
+};
+
 const StreamersList = ({ streamers }: StreamersListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -79,18 +95,21 @@ const StreamersList = ({ streamers }: StreamersListProps) => {
       {/* Streamers grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredStreamers.map(streamer => (
-          <Link key={streamer.slug} href={`/streamers/${streamer.slug}`}>
+          <Link 
+            key={streamer.slug} 
+            href={streamer.slug ? `/streamers/${streamer.slug}` : '#'}
+          >
             <Card className="overflow-hidden transition-all hover:shadow-md">
               <div className="aspect-square relative">
                 <Image 
                   src={streamer.image} 
-                  alt={streamer.name} 
+                  alt={decodeHtmlEntities(streamer.name)} 
                   fill 
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <CardContent className="p-4">
-                <h3 className="font-bold text-lg mb-2">{streamer.name}</h3>
+                <h3 className="font-bold text-lg mb-2">{decodeHtmlEntities(streamer.name)}</h3>
                 <div className="flex gap-2">
                   {streamer.platforms.includes('twitch') && (
                     <Twitch className="h-4 w-4 text-[#9146FF]" />
