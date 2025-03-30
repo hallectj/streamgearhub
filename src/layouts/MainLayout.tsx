@@ -33,7 +33,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     { name: "Blog", url: "/blog" },
     { name: "Guides", url: "/guides" },
     { name: "Reviews", url: "/reviews" },
-    { name: "Recommended Gear", url: "/recommended-gear" },
     { name: "Streamers", url: "/streamers" },
     { name: "About", url: "/about" },
     { name: "Contact", url: "mailto:hallectj@gmail.com" },
