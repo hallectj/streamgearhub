@@ -91,13 +91,17 @@
   color: hsl(var(--primary));
   text-decoration: underline;
   text-underline-offset: 2px;
-  transition: color 0.2s;
+  transition: color 0.2s, background-color 0.2s;
   font-weight: 500;
 }
 
 .guide-content a:hover,
 .blog-content a:hover {
   color: hsl(var(--secondary));
+  background-color: hsla(var(--primary), 0.1);
+  border-radius: 2px;
+  padding: 0 4px;
+  margin: 0 -4px;
   text-decoration-thickness: 2px;
 }
 
@@ -110,8 +114,8 @@
   
   .guide-content a:hover,
   .blog-content a:hover {
-    color: hsl(var(--secondary-foreground));
-    background-color: hsla(var(--secondary), 0.2);
+    color: hsl(var(--primary-secondary));
+    background-color: hsla(var(--primary), 0.2);
     border-radius: 2px;
   }
   

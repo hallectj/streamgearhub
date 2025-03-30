@@ -10,8 +10,6 @@ const NewsletterSignup = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      // Here you would typically send this to your newsletter service
-      console.log('Subscribing email:', email);
       setIsSubmitted(true);
       setEmail('');
       

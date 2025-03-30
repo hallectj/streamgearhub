@@ -105,7 +105,11 @@
   }
   
   a:not([class]) {
-    @apply text-primary hover:text-secondary underline underline-offset-2 font-medium transition-colors;
+    @apply text-primary hover:text-foreground hover:bg-secondary/20 hover:px-1 hover:rounded underline underline-offset-2 font-medium transition-colors;
+  }
+  
+  .dark a:not([class]) {
+    @apply hover:text-primary-foreground hover:bg-secondary/20 hover:px-1 hover:rounded;
   }
 }
 
