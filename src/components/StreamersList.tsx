@@ -53,42 +53,57 @@ const StreamersList = ({ streamers }: StreamersListProps) => {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col md:flex-row gap-4 items-start">
-        {/* Search */}
-        <div className="w-full md:w-64">
-          <Input
-            placeholder="Search streamers..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        
-        {/* Category filters */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-3 py-1 rounded-full text-sm ${
-              !selectedCategory 
-                ? 'bg-primary text-primary-foreground' 
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            }`}
-          >
-            All
-          </button>
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-3 py-1 rounded-full text-sm ${
-                selectedCategory === category 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+      {/* Search and filters section - make more prominent */}
+      <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+        <h2 className="text-xl font-bold mb-4">Find Streamers</h2>
+        <div className="flex flex-col md:flex-row gap-4 items-start">
+          {/* Search with button */}
+          <div className="w-full md:w-64 relative">
+            <div className="flex">
+              <Input
+                placeholder="Search streamers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-r-none"
+              />
+              <button 
+                className="bg-primary text-primary-foreground px-4 rounded-r-md hover:bg-primary/90"
+                onClick={() => {/* Search already happens on input change */}}
+              >
+                Search
+              </button>
+            </div>
+          </div>
+          
+          {/* Category filters - made more prominent */}
+          <div className="w-full">
+            <p className="font-medium mb-2">Filter by category:</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`px-3 py-1 rounded-full text-sm ${
+                  !selectedCategory 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                All
+              </button>
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    selectedCategory === category 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       

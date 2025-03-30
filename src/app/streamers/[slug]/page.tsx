@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import MainLayout from '@/layouts/MainLayout';
 import StreamerSetup from '@/components/StreamerSetup';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -193,18 +192,16 @@ export default async function StreamerPage({ params }: StreamerPageProps) {
   }
   
   return (
-    <MainLayout>
-      <div className="container max-w-7xl mx-auto px-4 py-12">
-        <div className="mb-8">
-          <Button variant="ghost" asChild className="gap-2">
-            <Link href="/streamers">
-              <ArrowLeft size={16} />
-              Back to Streamers
-            </Link>
-          </Button>
-        </div>
-        <StreamerSetup {...streamerSetup} />
+    <div className="container max-w-7xl mx-auto px-4 py-12">
+      <div className="mb-8">
+        <Button variant="ghost" asChild className="gap-2">
+          <Link href="/streamers">
+            <ArrowLeft size={16} />
+            Back to Streamers
+          </Link>
+        </Button>
       </div>
-    </MainLayout>
+      <StreamerSetup {...streamerSetup} />
+    </div>
   );
 }

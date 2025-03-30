@@ -20,12 +20,11 @@ const decodeHtmlEntities = (text: string): string => {
 };
 
 // Add custom styles for streamer info content
-// Remove unused styled-components import since it's not being used
-
-// You can also add this to your global CSS or create a new CSS module
 const styles = `
   .streamer-info-content {
     font-size: 0.8em;
+    max-height: 400px;
+    overflow-y: auto;
   }
   
   .streamer-info-content h1,
@@ -47,6 +46,31 @@ const styles = `
   .streamer-info-content ol {
     margin-bottom: 1em;
     padding-left: 1.5em;
+  }
+  
+  /* Custom scrollbar styles */
+  .streamer-info-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .streamer-info-content::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  
+  .streamer-info-content::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.5);
+    border-radius: 3px;
+  }
+  
+  .streamer-info-content::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+  
+  /* Firefox scrollbar styles */
+  .streamer-info-content {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.5) hsl(var(--muted));
   }
 `;
 

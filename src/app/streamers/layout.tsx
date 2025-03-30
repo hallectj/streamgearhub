@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
+import MainLayout from '@/layouts/MainLayout';
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Streamer Setups | StreamGearHub',
-    template: '%s | StreamGearHub'
-  },
+  title: 'Popular Streamers Setup | StreamGearHub',
   description: 'Discover the streaming gear used by your favorite content creators',
 };
 
@@ -13,5 +11,5 @@ export default function StreamersLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <MainLayout>{children}</MainLayout>;
 }
