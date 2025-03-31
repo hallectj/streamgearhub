@@ -7,6 +7,7 @@ import MainLayout from "@/layouts/MainLayout";
 import { ShareButtons } from "@/components/ShareButtons";
 import { usePathname } from 'next/navigation';
 import '../styles/content-styles.css'; // Import the shared styles
+import { useEffect, useState } from 'react';
 
 interface RelatedProduct {
   title: string;
@@ -47,50 +48,87 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
   const url = typeof window !== 'undefined' 
     ? `${window.location.origin}${pathname}` 
     : 'https://streamgearhub.com';
-
-  // Parse the mini_recommended_products string if it exists
-  let relatedProducts: RelatedProduct[] = [];
   
-  if (post.mini_recommended_products) {
-    try {
-      // Check if it's already an object/array
-      if (typeof post.mini_recommended_products === 'object') {
-        relatedProducts = Array.isArray(post.mini_recommended_products) 
-          ? post.mini_recommended_products 
-          : Object.values(post.mini_recommended_products);
-      } else if (typeof post.mini_recommended_products === 'string') {
-        
+  const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      // Parse the mini_recommended_products string if it exists and is not empty
+      let products: RelatedProduct[] = [];
+      
+      if (post.mini_recommended_products && 
+          post.mini_recommended_products !== "" && 
+          post.mini_recommended_products !== "[]") {
         try {
-          // Parse the string as JSON
-          const parsedData = JSON.parse(post.mini_recommended_products);
-          
-          // If it's an object with numeric keys, convert to array
-          if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-            relatedProducts = Object.values(parsedData);
-          } else if (Array.isArray(parsedData)) {
-            relatedProducts = parsedData;
+          // Check if it's already an object/array
+          if (typeof post.mini_recommended_products === 'object') {
+            products = Array.isArray(post.mini_recommended_products) 
+              ? post.mini_recommended_products 
+              : Object.values(post.mini_recommended_products);
+          } else if (typeof post.mini_recommended_products === 'string') {
+            try {
+              // Parse the string as JSON
+              const parsedData = JSON.parse(post.mini_recommended_products);
+              
+              // If it's an object with numeric keys, convert to array
+              if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+                products = Object.values(parsedData);
+              } else if (Array.isArray(parsedData)) {
+                products = parsedData;
+              }
+            } catch (jsonError) {
+              console.error('JSON parse error:', jsonError);
+            }
           }
-        } catch (jsonError) {
-          console.error('JSON parse error:', jsonError);
+        } catch (error) {
+          console.error('Error parsing recommended products:', error);
+        }
+      } else if (post.relatedProducts && post.relatedProducts.length > 0) {
+        // Use existing relatedProducts if available
+        products = post.relatedProducts;
+      }
+      
+      // If no products were found, fetch from fallback API
+      if (products.length === 0) {
+        try {
+          const response = await fetch("http://localhost/mylocalwp/wp-json/my_namespace/v1/products");
+          if (response.ok) {
+            const fallbackProducts = await response.json();
+            products = fallbackProducts.map(product => ({
+              title: product.title || "Product Name",
+              price: "$" + product.price || "Price unavailable",
+              image: product.product_url || "/images/imageNotFound.png",
+              rating: product.rating || 0,
+              amazonUrl: product.amazon_url || "#",
+              description: product.description || ""
+            }));
+          }
+        } catch (error) {
+          console.error('Error fetching fallback products:', error);
         }
       }
-    } catch (error) {
-      console.error('Error parsing recommended products:', error);
-    }
-  } else if (post.relatedProducts) {
-    // Use existing relatedProducts if available
-    relatedProducts = post.relatedProducts;
-  }
-  
-  // Ensure all required fields exist in each product
-  relatedProducts = relatedProducts.map(product => ({
-    title: product.title || "Product Name",
-    price: product.price || "Price unavailable",
-    image: product.image || "/images/imageNotFound.png",
-    rating: product.rating || 0,
-    amazonUrl: product.amazonUrl || "#",
-    description: product.description || ""
-  }));
+      
+      // Randomize the products array
+      const shuffledProducts = [...products].sort(() => Math.random() - 0.5);
+      
+      // Limit to 3 products
+      const limitedProducts = shuffledProducts.slice(0, 3);
+      
+      // Ensure all required fields exist in each product
+      const validatedProducts = limitedProducts.map(product => ({
+        title: product.title || "Product Name",
+        price: product.price || "Price unavailable",
+        image: product.image || "/images/imageNotFound.png",
+        rating: product.rating || 0,
+        amazonUrl: product.amazonUrl || "#",
+        description: product.description || ""
+      }));
+      
+      setRelatedProducts(validatedProducts);
+    };
+    
+    fetchProducts();
+  }, [post.mini_recommended_products, post.relatedProducts]);
 
   return (
     <MainLayout>

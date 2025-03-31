@@ -214,6 +214,7 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
                         rating={product.rating}
                         amazonUrl={product.amazonUrl}
                         description={product.description}
+                        slug={""}                     
                       />
                     ))}
                   </div>

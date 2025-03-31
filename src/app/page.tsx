@@ -115,37 +115,6 @@ async function fetchHeroImage() {
   }
 }
 
-// Mock data for recommended products
-const recommendedProducts = [
-  {
-    image: "/placeholder.svg",
-    title: "Elgato Stream Deck MK.2",
-    price: "$149.99",
-    rating: 4.8,
-    amazonUrl: "https://amazon.com",
-    description: "Customize your stream with 15 LCD keys",
-    review_link: "#"
-  },
-  {
-    image: "/placeholder.svg",
-    title: "Shure SM7B Microphone",
-    price: "$399.00",
-    rating: 4.9,
-    amazonUrl: "https://amazon.com",
-    description: "Industry standard vocal microphone",
-    review_link: "#"
-  },
-  {
-    image: "/placeholder.svg",
-    title: "Logitech C922x Webcam",
-    price: "$99.99",
-    rating: 4.7,
-    amazonUrl: "https://amazon.com",
-    description: "Stream in Full HD 1080p at 60 fps",
-    review_link: "#"
-  }
-];
-
 export const metadata: Metadata = {
   title: 'StreamGearHub - Your Ultimate Resource for Streaming Equipment',
   description: 'Find the best streaming gear, setup guides, and expert reviews to level up your content creation.',

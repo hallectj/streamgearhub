@@ -196,7 +196,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           
           <div className="mt-12 pt-6 border-t border-muted text-foreground/60 text-sm">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p>© 2023 StreamGearHub. All rights reserved.</p>
+              <p>© 2025 StreamGearHub. All rights reserved.</p>
               <p className="mt-2 md:mt-0">
                 <span className="text-xs">This site contains affiliate links. We may earn a commission when you purchase through these links.</span>
               </p>

@@ -32,33 +32,29 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
     notFound();
   }
   
-  // Mock data for recommended accessories
-  const recommendedAccessories = [
-    {
-      title: "Cloudlifter CL-1",
-      price: "$149.99",
-      image: "/images/accessories/cloudlifter.jpg",
-      rating: 4.8,
-      amazonUrl: "https://www.amazon.com/Cloud-Microphones-CL-1-Cloudlifter-1-channel/dp/B004MQSV04",
-      description: "Mic activator that provides +25dB of clean gain for dynamic microphones"
-    },
-    {
-      title: "RØDE PSA1+ Professional Studio Arm",
-      price: "$129.00",
-      image: "/images/accessories/rode-psa1.jpg",
-      rating: 4.7,
-      amazonUrl: "https://www.amazon.com/RODE-PSA1-Professional-Studio-Arm/dp/B001D7UYBO",
-      description: "Professional studio boom arm with internal springs and 360-degree rotation"
-    },
-    {
-      title: "Focusrite Scarlett 2i2",
-      price: "$179.99",
-      image: "/images/accessories/scarlett-2i2.jpg",
-      rating: 4.9,
-      amazonUrl: "https://www.amazon.com/Focusrite-Scarlett-Audio-Interface-Tools/dp/B07QR6Z1JB",
-      description: "USB audio interface with two high-quality mic preamps for streaming and recording"
+  // Fetch recommended accessories from the API
+  let recommendedAccessories = [];
+  try {
+    const accessoriesResponse = await fetch(
+      "http://localhost/mylocalwp/wp-json/my_namespace/v1/products"
+    );
+    
+    if (accessoriesResponse.ok) {
+      const accessoriesData = await accessoriesResponse.json();
+      recommendedAccessories = accessoriesData.map(product => ({
+        title: product.title || "Product",
+        price: "$" + product.price || "$0.00",
+        image: product.product_url || "/placeholder.svg",
+        rating: product.rating || 4.5,
+        amazonUrl: product.amazon_url || "https://amazon.com",
+        description: product.description || "Check out this recommended product",
+        slug: "" // No slug available from the API data
+      }));
     }
-  ];
+  } catch (error) {
+    console.error('Error fetching recommended accessories:', error);
+    // No fallback needed as per your instructions
+  }
   
   return <ReviewDetail review={review} relatedProducts={recommendedAccessories} />;
 }

@@ -53,7 +53,9 @@ async function getGuide(slug: string) {
     
     // Parse recommended products from meta field if available
     let relatedProducts = [];
-    if (guide.meta && guide.meta.recommended_products) {
+    if (guide.meta && guide.meta.recommended_products && 
+        guide.meta.recommended_products !== "" && 
+        guide.meta.recommended_products !== "[]") {
       try {
         let parsedProducts = JSON.parse(guide.meta.recommended_products);
         if (!Array.isArray(parsedProducts)) {
@@ -73,7 +75,29 @@ async function getGuide(slug: string) {
       }
     }
     
-    // No fallback products anymore, just use the empty array if none are found
+    // If no products were specified or parsing failed, fetch fallback products
+    if (relatedProducts.length === 0) {
+      try {
+        const fallbackResponse = await fetch(
+          "http://localhost/mylocalwp/wp-json/my_namespace/v1/products"
+        );
+        
+        if (fallbackResponse.ok) {
+          const fallbackProducts = await fallbackResponse.json();
+          relatedProducts = fallbackProducts.map(product => ({
+            title: product.title || "Product",
+            price: "$" + product.price || "$0.00",
+            image: product.product_url || "/placeholder.svg",
+            rating: product.rating || 4.5,
+            amazonUrl: product.amazon_url || "https://amazon.com",
+            description: product.description || "Check out this recommended product",
+            slug: "" // No slug available from the fallback data
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching fallback products:', error);
+      }
+    }
     
     return {
       title: guide.title.rendered,

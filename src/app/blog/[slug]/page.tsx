@@ -132,6 +132,13 @@ async function getPost(slug: string) {
     const wordCount = wpPost.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
     const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
     
+    // Get recommended products from meta field if available
+    // We'll handle the randomization and limiting in the BlogPostDisplay component
+    // Just pass the raw data here
+    const mini_recommended_products = typeof wpPost.mini_recommended_products === 'string' 
+      ? wpPost.mini_recommended_products 
+      : JSON.stringify(wpPost.mini_recommended_products);
+    
     return {
       title: wpPost.title.rendered,
       content: wpPost.content.rendered,
@@ -146,29 +153,9 @@ async function getPost(slug: string) {
       coverImage: featuredImage,
       category: categories.length > 0 ? categories[0] : 'Blog',
       tags: tags.length > 0 ? tags : ['streaming'],
-      // Pass the mini_recommended_products field from the API
-      mini_recommended_products: typeof wpPost.mini_recommended_products === 'string' 
-        ? wpPost.mini_recommended_products 
-        : JSON.stringify(wpPost.mini_recommended_products),
-      // Keep the fallback related products in case mini_recommended_products is not available
-      relatedProducts: [
-        {
-          title: "Elgato Stream Deck MK.2",
-          price: "$149.99",
-          image: "/placeholder.svg",
-          rating: 4.8,
-          amazonUrl: "https://amazon.com",
-          description: "Customize your stream with 15 LCD keys",
-        },
-        {
-          title: "Shure SM7B Vocal Microphone",
-          price: "$399.00",
-          image: "/placeholder.svg",
-          rating: 4.9,
-          amazonUrl: "https://amazon.com",
-          description: "Industry standard vocal microphone",
-        },
-      ],
+      mini_recommended_products,
+      // No hardcoded fallback products anymore
+      relatedProducts: [],
     };
   } catch (error) {
     console.error('Error fetching post:', error);
