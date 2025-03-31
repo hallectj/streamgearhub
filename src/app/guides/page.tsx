@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import GuidesDisplay from '@/components/GuidesDisplay';
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 const getDifficulty = (guide) => {
   if (!guide?._embedded?.['wp:term']) {
@@ -17,7 +18,7 @@ const getDifficulty = (guide) => {
 async function getGuides() {
   try {
     const response = await fetch(
-      'http://localhost/mylocalwp/wp-json/wp/v2/guides?_embed',
+      wpApiUrl('guides?_embed'),
       //{ next: { revalidate: 3600 } } // Revalidate every hour
       { cache: 'no-store' }
     );

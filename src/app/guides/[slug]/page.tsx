@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import GuideDetailDisplay from "../../../components/GuideDetailDisplay";
+import { wpApiUrl, customApiUrl } from '@/config/api';
 
 const getDifficulty = (guide) => {
   if (!guide?._embedded?.['wp:term']) {
@@ -18,7 +19,7 @@ const getDifficulty = (guide) => {
 async function getGuide(slug: string) {
   try {
     const response = await fetch(
-      `http://localhost/mylocalwp/wp-json/wp/v2/guides?slug=${slug}&_embed`,
+      wpApiUrl(`guides?slug=${slug}&_embed`),
       //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     
@@ -79,7 +80,7 @@ async function getGuide(slug: string) {
     if (relatedProducts.length === 0) {
       try {
         const fallbackResponse = await fetch(
-          "http://localhost/mylocalwp/wp-json/my_namespace/v1/products"
+          customApiUrl('products')
         );
         
         if (fallbackResponse.ok) {

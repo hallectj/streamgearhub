@@ -4,6 +4,7 @@ import StreamerSetup from '@/components/StreamerSetup';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 // Add a helper function to decode HTML entities
 const decodeHtmlEntities = (text: string): string => {
@@ -30,7 +31,7 @@ interface StreamerPageProps {
 async function getStreamer(slug: string) {
   try {
     const response = await fetch(
-      `http://localhost/mylocalwp/wp-json/wp/v2/streamer?slug=${slug}`,
+      wpApiUrl(`streamer?slug=${slug}`),
       //{ cache: 'no-store' }
     );
     

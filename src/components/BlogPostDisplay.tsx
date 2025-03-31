@@ -8,6 +8,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { usePathname } from 'next/navigation';
 import '../styles/content-styles.css'; // Import the shared styles
 import { useEffect, useState } from 'react';
+import { customApiUrl } from '@/config/api';
 
 interface RelatedProduct {
   title: string;
@@ -91,7 +92,7 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
       // If no products were found, fetch from fallback API
       if (products.length === 0) {
         try {
-          const response = await fetch("http://localhost/mylocalwp/wp-json/my_namespace/v1/products");
+          const response = await fetch(customApiUrl('products'));
           if (response.ok) {
             const fallbackProducts = await response.json();
             products = fallbackProducts.map(product => ({

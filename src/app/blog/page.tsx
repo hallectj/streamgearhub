@@ -4,12 +4,13 @@ import { ArrowRight, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
 import BlogList from "@/components/BlogList";
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 // Fetch blog posts on the server
 async function getBlogPosts() {
   try {
     const response = await fetch(
-      `http://localhost/mylocalwp/wp-json/wp/v2/posts?_embed&per_page=9`,
+      wpApiUrl('posts?_embed&per_page=9'),
       //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     

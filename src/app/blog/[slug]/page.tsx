@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import BlogPostDisplay from "@/components/BlogPostDisplay";
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 // Fetch related posts based on category and tags
 async function getRelatedPosts(currentSlug: string, category: string, tags: string[], limit = 2) {
@@ -8,7 +9,7 @@ async function getRelatedPosts(currentSlug: string, category: string, tags: stri
     // First try to get posts with the same category name
     // We need to get all posts and filter them since we have the category name, not ID
     const allPostsResponse = await fetch(
-      `http://localhost/mylocalwp/wp-json/wp/v2/posts?per_page=${limit + 1}&_embed`
+      wpApiUrl(`posts?per_page=${limit + 1}&_embed`)
     );
     
     if (!allPostsResponse.ok) {
@@ -78,7 +79,7 @@ async function getRelatedPosts(currentSlug: string, category: string, tags: stri
 async function getPost(slug: string) {
   try {
     const response = await fetch(
-      `http://localhost/mylocalwp/wp-json/wp/v2/posts?slug=${slug}&_embed`,
+      wpApiUrl(`posts?slug=${slug}&_embed`),
       //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     

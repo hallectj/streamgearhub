@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown, Star } from "lucide-react";
 import MainLayout from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
+import { wpApiUrl } from "@/config/api"; // Import the helper function
 
 // Review card component
 interface ReviewCardProps {
@@ -142,7 +143,7 @@ const Reviews = ({ initialReviews = [] }: ReviewsProps) => {
     const fetchReviews = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/review?_embed&per_page=100');
+        const response = await fetch(wpApiUrl('review?_embed&per_page=100'));
         
         if (!response.ok) {
           throw new Error('Failed to fetch reviews');

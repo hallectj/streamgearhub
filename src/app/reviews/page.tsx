@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Reviews from '@/components/Reviews';
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 export const metadata: Metadata = {
   title: 'Streaming Gear Reviews | StreamGearHub',
@@ -18,7 +19,7 @@ export default async function ReviewsPage() {
 // Server-side function to fetch reviews
 export async function fetchReviews() {
   try {
-    const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/review?_embed&per_page=100', {
+    const response = await fetch(wpApiUrl('review?_embed&per_page=100'), {
       //next: { revalidate: 3600 } // Revalidate every hour
     });
     

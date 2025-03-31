@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ReviewDetail from '@/components/ReviewDetail';
+import { wpApiUrl, customApiUrl } from '@/config/api'; // Import the helper functions
 
 // Generate metadata for the page
-//export default async function GuideDetailPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element>
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const review = await fetchReview(resolvedParams.slug);
@@ -21,8 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-//export default async function GuideDetailPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
-
 // This is a server component that will render the ReviewDetail client component
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -36,7 +34,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
   let recommendedAccessories = [];
   try {
     const accessoriesResponse = await fetch(
-      "http://localhost/mylocalwp/wp-json/my_namespace/v1/products"
+      customApiUrl('products')
     );
     
     if (accessoriesResponse.ok) {
@@ -62,7 +60,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
 // Server-side function to fetch a single review
 async function fetchReview(slug: string) {
   try {
-    const response = await fetch(`http://localhost/mylocalwp/wp-json/wp/v2/review?slug=${slug}&_embed`, {
+    const response = await fetch(wpApiUrl(`review?slug=${slug}&_embed`), {
       //next: { revalidate: 3600 } // Revalidate every hour
     });
     

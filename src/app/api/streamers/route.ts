@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
+import { wpApiUrl } from '@/config/api'; // Import the helper function
 
 // Fetch streamers from WordPress
 async function getStreamers() {
   try {
     const response = await fetch(
-      'http://localhost/mylocalwp/wp-json/wp/v2/streamer',
+      wpApiUrl('streamer'),
       { cache: 'no-store' }
     );
     

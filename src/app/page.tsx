@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
 import ProductCard from "@/components/ProductCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import { wpApiUrl } from "@/config/api"; // Import the helper function
 
 // Fetch recent posts from WordPress
 async function getRecentPosts() {
   try {
     const response = await fetch(
-      'http://localhost/mylocalwp/wp-json/wp/v2/posts?_embed&per_page=3',
+      wpApiUrl('posts?_embed&per_page=3'),
       //{ next: { revalidate: 3600 } } // Revalidate every hour
     );
     
@@ -99,7 +100,7 @@ async function getRecentPosts() {
 // Fetch hero image from WordPress
 async function fetchHeroImage() {
   try {
-    const res = await fetch("http://localhost/mylocalwp/wp-json/wp/v2/media?search=hero-setup", 
+    const res = await fetch(wpApiUrl('media?search=hero-setup'), 
       { next: { revalidate: 3600 } }
     );
     
@@ -108,10 +109,10 @@ async function fetchHeroImage() {
     }
     
     const data = await res.json();
-    return data.length > 0 ? data[0].source_url : "http://localhost/mylocalwp/wp-content/uploads/2025/03/hero-setup.jpg";
+    return data.length > 0 ? data[0].source_url : "/images/placeholder-hero.jpg";
   } catch (error) {
     console.error('Error fetching hero image:', error);
-    return "http://localhost/mylocalwp/wp-content/uploads/2025/03/hero-setup.jpg";
+    return "/images/placeholder-hero.jpg";
   }
 }
 
@@ -220,7 +221,7 @@ import StreamerCarousel from "@/components/StreamerCarousel";
 async function getPopularStreamers() {
   try {
     const response = await fetch(
-      'http://localhost/mylocalwp/wp-json/wp/v2/streamer?_embed&per_page=5',
+      wpApiUrl('streamer?_embed&per_page=5'),
       //{ next: { revalidate: 3600 } }
     );
     
