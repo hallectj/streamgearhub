@@ -51,6 +51,30 @@ async function getGuide(slug: string) {
 
     const difficulty = getDifficulty(guide);
     
+    // Parse recommended products from meta field if available
+    let relatedProducts = [];
+    if (guide.meta && guide.meta.recommended_products) {
+      try {
+        let parsedProducts = JSON.parse(guide.meta.recommended_products);
+        if (!Array.isArray(parsedProducts)) {
+          parsedProducts = [parsedProducts];
+        }
+        relatedProducts = parsedProducts.map(product => ({
+          title: product.product_name || "Product",
+          price: "$" + product.product_price || "$0.00",
+          image: product.product_url || "/placeholder.svg",
+          rating: 4.5, // Default rating since it's not in the meta
+          amazonUrl: product.amazon_url || "https://amazon.com",
+          description: product.product_description || "Check out this recommended product",
+          slug: "" // No slug available from the meta data
+        }));
+      } catch (error) {
+        console.error('Error parsing recommended products:', error);
+      }
+    }
+    
+    // No fallback products anymore, just use the empty array if none are found
+    
     return {
       title: guide.title.rendered,
       content: guide.content.rendered,
@@ -66,24 +90,7 @@ async function getGuide(slug: string) {
       featuredImage,
       difficulty,
       readTime,
-      relatedProducts: [
-        {
-          title: "Elgato Stream Deck MK.2",
-          price: "$149.99",
-          image: "/placeholder.svg",
-          rating: 4.8,
-          amazonUrl: "https://amazon.com",
-          description: "Customize your stream with 15 LCD keys",
-        },
-        {
-          title: "Shure SM7B Vocal Microphone",
-          price: "$399.00",
-          image: "/placeholder.svg",
-          rating: 4.9,
-          amazonUrl: "https://amazon.com",
-          description: "Industry standard vocal microphone",
-        },
-      ],
+      relatedProducts,
     };
   } catch (error) {
     console.error('Error fetching guide:', error);

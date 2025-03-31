@@ -123,7 +123,8 @@ const recommendedProducts = [
     price: "$149.99",
     rating: 4.8,
     amazonUrl: "https://amazon.com",
-    description: "Customize your stream with 15 LCD keys"
+    description: "Customize your stream with 15 LCD keys",
+    review_link: "#"
   },
   {
     image: "/placeholder.svg",
@@ -131,7 +132,8 @@ const recommendedProducts = [
     price: "$399.00",
     rating: 4.9,
     amazonUrl: "https://amazon.com",
-    description: "Industry standard vocal microphone"
+    description: "Industry standard vocal microphone",
+    review_link: "#"
   },
   {
     image: "/placeholder.svg",
@@ -139,7 +141,8 @@ const recommendedProducts = [
     price: "$99.99",
     rating: 4.7,
     amazonUrl: "https://amazon.com",
-    description: "Stream in Full HD 1080p at 60 fps"
+    description: "Stream in Full HD 1080p at 60 fps",
+    review_link: "#"
   }
 ];
 
@@ -167,23 +170,24 @@ async function getReviewsForProductCards() {
         featuredImage = review._embedded['wp:featuredmedia'][0].source_url;
       }
       
-      // Extract price, rating, and description from ACF fields if available
+      // Extract price, rating, and description from custom fields if available
       let price = "$0.00";
       let rating = 4.5;
       let description = "";
+      let slug = "";
       
-      if (review.acf) {
-        if (review.acf.price) price = review.acf.price;
-        if (review.acf.rating) rating = parseFloat(review.acf.rating);
-        if (review.acf.short_description) description = review.acf.short_description;
-      }
+      // Use custom fields instead of ACF
+      if (review.price) price = "$" + review.price.toFixed(2);
+      if (review.star_rating) rating = parseFloat(review.star_rating);
+      if (review.link) slug = review.slug;
+      //if (review.product_short_description) description = review.product_short_description;
       
       return {
         title: review.title.rendered,
         price: price,
         image: featuredImage,
         rating: rating,
-        amazonUrl: review.acf?.amazon_link || "https://amazon.com",
+        amazonUrl: review.amazon_link || "https://amazon.com",
         description: description || "Check out our review for more details",
         slug: review.slug
       };
@@ -197,6 +201,7 @@ async function getReviewsForProductCards() {
         price: "$149.99",
         image: "/placeholder.svg",
         rating: 4.8,
+        review_link: "#",
         amazonUrl: "https://amazon.com",
         description: "Customize your stream with 15 LCD keys",
       },
@@ -206,6 +211,7 @@ async function getReviewsForProductCards() {
         image: "/placeholder.svg",
         rating: 4.9,
         amazonUrl: "https://amazon.com",
+        review_link: "#",
         description: "Industry standard vocal microphone",
       },
       {
@@ -214,19 +220,110 @@ async function getReviewsForProductCards() {
         image: "/placeholder.svg",
         rating: 4.7,
         amazonUrl: "https://amazon.com",
+        review_link: "#",
         description: "Stream in Full HD 1080p at 60 fps",
       }
     ];
   }
 }
+// First, let's add the import for a slider component
+// Remove these Swiper imports
+// import { Swiper, SwiperSlide } from 'swiper/react';
+// import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+// import 'swiper/css';
+// import 'swiper/css/navigation';
+// import 'swiper/css/pagination';
 
-// In your Home component, update to use Promise.all for parallel fetching
+// Add these imports for the carousel components
+// Remove these imports for the carousel components
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from "@/components/ui/carousel";
+
+// Add this import instead
+import StreamerCarousel from "@/components/StreamerCarousel";
+
+// Add a function to fetch streamers
+async function getPopularStreamers() {
+  try {
+    const response = await fetch(
+      'http://localhost/mylocalwp/wp-json/wp/v2/streamer?_embed&per_page=5',
+      //{ next: { revalidate: 3600 } }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch streamers: ${response.status}`);
+    }
+    
+    const streamers = await response.json();
+    
+    return streamers.map((streamer: any) => {
+      // Get featured image if available
+      let image = "/placeholder.svg";
+      if (streamer._embedded && 
+          streamer._embedded['wp:featuredmedia'] && 
+          streamer._embedded['wp:featuredmedia'][0] &&
+          streamer._embedded['wp:featuredmedia'][0].source_url) {
+        image = streamer._embedded['wp:featuredmedia'][0].source_url;
+      }
+      
+      // Also check for streamer_profile_picture or streamer_other_picture
+      if (streamer.streamer_profile_picture) {
+        image = streamer.streamer_profile_picture;
+      } else if (streamer.streamer_other_picture) {
+        image = streamer.streamer_other_picture;
+      }
+      
+      return {
+        title: streamer.title.rendered,
+        slug: streamer.slug,
+        image: image, // Use the image property that matches StreamersList
+        featuredImage: image, // Keep for backward compatibility
+        excerpt: streamer.excerpt.rendered,
+        _embedded: streamer._embedded // Pass through the embedded data
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching streamers:', error);
+    // Return fallback data
+    return [
+      {
+        title: "Ninja",
+        slug: "ninja",
+        image: "/placeholder.svg",
+        featuredImage: "/placeholder.svg",
+        excerpt: "Professional Fortnite player and top Twitch streamer"
+      },
+      {
+        title: "Pokimane",
+        slug: "pokimane",
+        image: "/placeholder.svg",
+        featuredImage: "/placeholder.svg",
+        excerpt: "Variety streamer known for gaming and Just Chatting content"
+      },
+      {
+        title: "Shroud",
+        slug: "shroud",
+        image: "/placeholder.svg",
+        featuredImage: "/placeholder.svg",
+        excerpt: "Former CS:GO pro known for FPS gameplay"
+      }
+    ];
+  }
+}
+
+// In your Home component, update Promise.all to include streamers
 export default async function Home() {
   // Fetch all data in parallel
-  const [recentPosts, heroImageUrl, recommendedProducts] = await Promise.all([
+  const [recentPosts, heroImageUrl, recommendedProducts, popularStreamers] = await Promise.all([
     getRecentPosts(),
     fetchHeroImage(),
-    getReviewsForProductCards()
+    getReviewsForProductCards(),
+    getPopularStreamers()
   ]);
   
   return (
@@ -234,37 +331,62 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/5 dark:to-background">
         <div className="container max-w-7xl mx-auto px-4 py-20 md:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Level Up Your <span className="text-primary">Streaming</span> Setup
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">
-                Find the best gear, expert reviews, and setup guides to create professional-quality streams.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/products">
-                    Explore Products
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/guides">
-                    Read Guides
-                  </Link>
-                </Button>
+          {/* Top Hero Text - Centered */}
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Level Up Your <span className="text-primary">Streaming</span> Setup
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              Find the best gear, expert reviews, and setup guides to create professional-quality streams.
+            </p>
+            {/* Buttons moved to below the hero image */}
+          </div>
+          
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Left Column - Hero Image */}
+            <div className="flex flex-col h-full">
+              <div className="relative h-full">
+                <div className="relative z-10 rounded-lg overflow-hidden shadow-xl h-full">
+                  <img 
+                    src={heroImageUrl} 
+                    alt="Professional Streaming Setup" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-1/3 h-1/3 bg-primary/10 rounded-lg -z-10"></div>
+                <div className="absolute -top-4 -left-4 w-1/4 h-1/4 bg-secondary/10 rounded-lg -z-10"></div>
+              </div>
+              
+              {/* Buttons moved here */}
+              <div className="mt-6 text-center">
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <Button size="lg" asChild>
+                    <Link href="/blog">
+                      Explore Our Blog
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" asChild>
+                    <Link href="/guides">
+                      Read Guides
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="relative">
-              <div className="relative z-10 rounded-lg overflow-hidden shadow-xl">
-                <img 
-                  src={heroImageUrl} 
-                  alt="Professional Streaming Setup" 
-                  className="w-full h-auto"
-                />
+            
+            {/* Right Column - Streamer Builds Slider */}
+            <div className="flex flex-col h-full">
+              <StreamerCarousel streamers={popularStreamers} />
+              
+              <div className="mt-6 text-center">
+                <Button variant="outline" asChild className="gap-2">
+                  <Link href="/streamers">
+                    View All Streamer Builds
+                    <ArrowRight size={16} />
+                  </Link>
+                </Button>
               </div>
-              <div className="absolute -bottom-6 -right-6 w-2/3 h-2/3 bg-primary/10 rounded-lg -z-10"></div>
-              <div className="absolute -top-6 -left-6 w-1/2 h-1/2 bg-secondary/10 rounded-lg -z-10"></div>
             </div>
           </div>
         </div>
@@ -281,6 +403,7 @@ export default async function Home() {
                 image={product.image}
                 title={product.title}
                 price={product.price}
+                slug={product.slug}
                 rating={product.rating}
                 amazonUrl={product.amazonUrl}
                 description={product.description}
@@ -352,11 +475,11 @@ export default async function Home() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-primary/5">
+{/*       <section className="py-20 bg-primary/5">
         <div className="container max-w-7xl mx-auto px-4">
           <NewsletterSignup />
         </div>
-      </section>
+      </section> */}
     </MainLayout>
   );
 }

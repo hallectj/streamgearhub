@@ -132,20 +132,21 @@ export default function StreamersPage() {
       {/* Streamers grid */}
       {!isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredStreamers.map(streamer => {
-            // Make sure we have a valid slug
-            const validSlug = streamer.slug ? `/streamers/${streamer.slug}` : '#';
+          {filteredStreamers.map((streamer, index) => {
+            // Make sure we have a valid slug, use index as fallback
+            const validSlug = streamer.slug || `streamer-${index}`;
+            const href = `/streamers/${validSlug}`;
             
             return (
               <Link 
-                key={streamer.slug || `streamer-${Math.random()}`} 
-                href={validSlug}
+                key={streamer.slug || `streamer-${index}`} 
+                href={href}
                 className="block h-full"
               >
                 <Card className="overflow-hidden transition-all hover:shadow-md h-full bg-background/50 border-muted">
                   <div className="aspect-square relative">
                     <Image 
-                      src={streamer.image} 
+                      src={streamer.image || placeholderImage} 
                       alt={decodeHtmlEntities(streamer.name)} 
                       fill 
                       className="object-cover"
@@ -154,13 +155,13 @@ export default function StreamersPage() {
                   <CardContent className="p-4">
                     <h3 className="font-bold text-lg mb-2">{decodeHtmlEntities(streamer.name)}</h3>
                     <div className="flex gap-2">
-                      {streamer.platforms.includes('twitch') && (
+                      {streamer.platforms?.includes('twitch') && (
                         <Twitch className="h-4 w-4 text-[#9146FF]" />
                       )}
-                      {streamer.platforms.includes('youtube') && (
+                      {streamer.platforms?.includes('youtube') && (
                         <Youtube className="h-4 w-4 text-[#FF0000]" />
                       )}
-                      {streamer.platforms.includes('kick') && (
+                      {streamer.platforms?.includes('kick') && (
                         <ExternalLink className="h-4 w-4 text-[#53FC18]" />
                       )}
                     </div>

@@ -184,13 +184,13 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </a>
               </div>
               
-              <div className="mt-6">
+          {/* <div className="mt-6">
                 <h4 className="font-heading font-semibold mb-2">Sign up for updates</h4>
                 <div className="flex">
                   <input type="email" placeholder="Your email" className="bg-muted text-foreground px-4 py-2 rounded-l-md w-full focus:outline-none focus:ring-1 focus:ring-primary" />
                   <button className="bg-primary text-primary-foreground px-4 py-2 rounded-r-md">Subscribe</button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           

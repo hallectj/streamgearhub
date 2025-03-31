@@ -185,7 +185,8 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
                           price={product.price}
                           rating={product.rating}
                           amazonUrl={product.amazonUrl}
-                          description={product.description}
+                          description={product.description} 
+                          slug={""}                        
                         />
                       ))}
                     </div>
