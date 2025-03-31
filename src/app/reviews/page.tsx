@@ -16,7 +16,7 @@ export default async function ReviewsPage() {
 }
 
 // Server-side function to fetch reviews
-async function fetchReviews() {
+export async function fetchReviews() {
   try {
     const response = await fetch('http://localhost/mylocalwp/wp-json/wp/v2/review?_embed&per_page=100', {
       //next: { revalidate: 3600 } // Revalidate every hour

@@ -2,6 +2,78 @@ import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import BlogPostDisplay from "@/components/BlogPostDisplay";
 
+// Fetch related posts based on category and tags
+async function getRelatedPosts(currentSlug: string, category: string, tags: string[], limit = 2) {
+  try {
+    // First try to get posts with the same category name
+    // We need to get all posts and filter them since we have the category name, not ID
+    const allPostsResponse = await fetch(
+      `http://localhost/mylocalwp/wp-json/wp/v2/posts?per_page=${limit + 1}&_embed`
+    );
+    
+    if (!allPostsResponse.ok) {
+      throw new Error(`Failed to fetch posts: ${allPostsResponse.status}`);
+    }
+    
+    const allPosts = await allPostsResponse.json();
+    
+    // Filter posts to exclude current post and match category
+    let relatedPosts = allPosts
+      .filter((post: any) => post.slug !== currentSlug)
+      .filter((post: any) => {
+        if (post._embedded && post._embedded['wp:term'] && post._embedded['wp:term'][0]) {
+          const postCategories = post._embedded['wp:term'][0].map((term: any) => term.name);
+          return postCategories.includes(category);
+        }
+        return false;
+      })
+      .slice(0, limit);
+    
+    // If we don't have enough posts from the same category, add posts with similar tags
+    if (relatedPosts.length < limit) {
+      const remainingPosts = allPosts
+        .filter((post: any) => post.slug !== currentSlug)
+        .filter((post: any) => !relatedPosts.some((rp: any) => rp.id === post.id))
+        .filter((post: any) => {
+          if (post._embedded && post._embedded['wp:term'] && post._embedded['wp:term'][1]) {
+            const postTags = post._embedded['wp:term'][1].map((term: any) => term.name);
+            return tags.some(tag => postTags.includes(tag));
+          }
+          return false;
+        })
+        .slice(0, limit - relatedPosts.length);
+      
+      relatedPosts = [...relatedPosts, ...remainingPosts];
+    }
+    
+    // Format the related posts
+    return relatedPosts.map((post: any) => {
+      // Get featured image if available
+      let featuredImage = "/placeholder.svg";
+      if (post._embedded && 
+          post._embedded['wp:featuredmedia'] && 
+          post._embedded['wp:featuredmedia'][0] &&
+          post._embedded['wp:featuredmedia'][0].source_url) {
+        featuredImage = post._embedded['wp:featuredmedia'][0].source_url;
+      }
+      
+      return {
+        title: post.title.rendered,
+        date: new Date(post.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+        slug: post.slug,
+        image: featuredImage
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching related posts:', error);
+    return [];
+  }
+}
+
 // Fetch the post data on the server
 async function getPost(slug: string) {
   try {
@@ -154,5 +226,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     return notFound();
   }
   
-  return <BlogPostDisplay post={post} />;
+  // Fetch related posts based on the current post's category and tags
+  const relatedPosts = await getRelatedPosts(
+    resolvedParams.slug,
+    post.category,
+    post.tags
+  );
+  
+  return <BlogPostDisplay post={post} relatedPosts={relatedPosts} />;
 }

@@ -160,7 +160,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div>
               <h4 className="font-heading font-semibold mb-4">Resources</h4>
               <ul className="space-y-2">
-                <li><Link href="/recommended-gear" className="text-foreground/70 hover:text-primary">Recommended Gear</Link></li>
+                <li><Link href="/reviews" className="text-foreground/70 hover:text-primary">Reviewed Gear</Link></li>
                 <li><Link href="/about" className="text-foreground/70 hover:text-primary">About Us</Link></li>
                 <li><Link href="/contact" className="text-foreground/70 hover:text-primary">Contact</Link></li>
                 <li><a href="#" className="text-foreground/70 hover:text-primary">Privacy Policy</a></li>

@@ -17,6 +17,14 @@ interface RelatedProduct {
   description: string;
 }
 
+// First, let's update the interface to include related posts
+interface RelatedPost {
+  title: string;
+  date: string;
+  slug: string;
+  image?: string;
+}
+
 interface BlogPostDisplayProps {
   post: {
     title: string;
@@ -31,9 +39,10 @@ interface BlogPostDisplayProps {
     mini_recommended_products?: string;
     relatedProducts?: RelatedProduct[];
   };
+  relatedPosts?: RelatedPost[];
 }
 
-const BlogPostDisplay = ({ post }: BlogPostDisplayProps) => {
+const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
   const pathname = usePathname();
   const url = typeof window !== 'undefined' 
     ? `${window.location.origin}${pathname}` 
@@ -166,26 +175,33 @@ const BlogPostDisplay = ({ post }: BlogPostDisplayProps) => {
                   </div>
                 </div>
                 
-                {/* Related posts */}
-                <div className="bg-card rounded-lg p-6 border border-border">
-                  <h3 className="font-bold mb-4">Related Posts</h3>
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <div className="w-16 h-16 rounded bg-muted flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-medium text-sm line-clamp-2">Best Microphones for Streaming in 2025</h4>
-                        <p className="text-xs text-muted-foreground mt-1">March 15, 2025</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="w-16 h-16 rounded bg-muted flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-medium text-sm line-clamp-2">How to Grow Your Audience on Twitch</h4>
-                        <p className="text-xs text-muted-foreground mt-1">February 28, 2025</p>
-                      </div>
+                {/* Related posts - now dynamic */}
+                {relatedPosts.length > 0 && (
+                  <div className="bg-card rounded-lg p-6 border border-border">
+                    <h3 className="font-bold mb-4">Related Posts</h3>
+                    <div className="space-y-4">
+                      {relatedPosts.map((relatedPost, index) => (
+                        <Link href={`/blog/${relatedPost.slug}`} key={index}>
+                          <div className="flex gap-3 hover:bg-muted/50 p-2 rounded-md transition-colors">
+                            <div className="w-16 h-16 rounded bg-muted flex-shrink-0">
+                              {relatedPost.image && (
+                                <img 
+                                  src={relatedPost.image} 
+                                  alt={relatedPost.title}
+                                  className="w-full h-full object-cover rounded"
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm line-clamp-2">{relatedPost.title}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">{relatedPost.date}</p>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Related products */}
                 {relatedProducts.length > 0 && (

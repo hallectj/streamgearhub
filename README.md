@@ -11,7 +11,7 @@ StreamGearHub is designed to help streamers of all experience levels find the ri
 - **Equipment Reviews**: Detailed analysis of streaming hardware
 - **Setup Guides**: Step-by-step instructions for optimal streaming configurations
 - **Blog**: Latest news and tips for content creators
-- **Recommended Gear**: Curated lists of the best equipment for different budgets
+- **Reviewed Gear**: Curated lists of the best equipment for different budgets
 - **Dark/Light Mode**: Customizable viewing experience
 
 ## Tech Stack

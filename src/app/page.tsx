@@ -148,11 +148,86 @@ export const metadata: Metadata = {
   description: 'Find the best streaming gear, setup guides, and expert reviews to level up your content creation.',
 };
 
+// Import the fetchReviews function
+import { fetchReviews } from './reviews/page';
+
+// Add a function to process reviews for product cards
+async function getReviewsForProductCards() {
+  try {
+    const reviews = await fetchReviews();
+    
+    // Take only the first 3 reviews
+    return reviews.slice(0, 3).map((review: any) => {
+      // Get featured image if available
+      let featuredImage = "/placeholder.svg";
+      if (review._embedded && 
+          review._embedded['wp:featuredmedia'] && 
+          review._embedded['wp:featuredmedia'][0] &&
+          review._embedded['wp:featuredmedia'][0].source_url) {
+        featuredImage = review._embedded['wp:featuredmedia'][0].source_url;
+      }
+      
+      // Extract price, rating, and description from ACF fields if available
+      let price = "$0.00";
+      let rating = 4.5;
+      let description = "";
+      
+      if (review.acf) {
+        if (review.acf.price) price = review.acf.price;
+        if (review.acf.rating) rating = parseFloat(review.acf.rating);
+        if (review.acf.short_description) description = review.acf.short_description;
+      }
+      
+      return {
+        title: review.title.rendered,
+        price: price,
+        image: featuredImage,
+        rating: rating,
+        amazonUrl: review.acf?.amazon_link || "https://amazon.com",
+        description: description || "Check out our review for more details",
+        slug: review.slug
+      };
+    });
+  } catch (error) {
+    console.error('Error processing reviews for product cards:', error);
+    // Return fallback data if there's an error
+    return [
+      {
+        title: "Elgato Stream Deck MK.2",
+        price: "$149.99",
+        image: "/placeholder.svg",
+        rating: 4.8,
+        amazonUrl: "https://amazon.com",
+        description: "Customize your stream with 15 LCD keys",
+      },
+      {
+        title: "Shure SM7B Microphone",
+        price: "$399.00",
+        image: "/placeholder.svg",
+        rating: 4.9,
+        amazonUrl: "https://amazon.com",
+        description: "Industry standard vocal microphone",
+      },
+      {
+        title: "Logitech C922x Webcam",
+        price: "$99.99",
+        image: "/placeholder.svg",
+        rating: 4.7,
+        amazonUrl: "https://amazon.com",
+        description: "Stream in Full HD 1080p at 60 fps",
+      }
+    ];
+  }
+}
+
+// In your Home component, update to use Promise.all for parallel fetching
 export default async function Home() {
-  // Fetch recent posts for the blog section
-  const recentPosts = await getRecentPosts();
-  // Fetch hero image
-  const heroImageUrl = await fetchHeroImage();
+  // Fetch all data in parallel
+  const [recentPosts, heroImageUrl, recommendedProducts] = await Promise.all([
+    getRecentPosts(),
+    fetchHeroImage(),
+    getReviewsForProductCards()
+  ]);
   
   return (
     <MainLayout>
@@ -198,7 +273,7 @@ export default async function Home() {
       {/* Recommended Products Section */}
       <section className="py-16 bg-secondary/10">
         <div className="container max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8">Recommended Gear</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">Reviewed Gear</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {recommendedProducts.map((product, index) => (
               <ProductCard
@@ -214,8 +289,8 @@ export default async function Home() {
           </div>
           <div className="mt-8 text-center">
             <Button variant="outline" asChild className="gap-2">
-              <Link href="/recommended-gear">
-                View All Recommended Gear
+              <Link href="/reviews">
+                View All Reviews
                 <ArrowRight size={16} />
               </Link>
             </Button>
