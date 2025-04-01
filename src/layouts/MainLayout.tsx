@@ -163,7 +163,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <li><Link href="/reviews" className="text-foreground/70 hover:text-primary">Reviewed Gear</Link></li>
                 <li><Link href="/about" className="text-foreground/70 hover:text-primary">About Us</Link></li>
                 <li><Link href="/contact" className="text-foreground/70 hover:text-primary">Contact</Link></li>
-                <li><a href="#" className="text-foreground/70 hover:text-primary">Privacy Policy</a></li>
+                <li><Link href="/privacy-policy" className="text-foreground/70 hover:text-primary">Privacy Policy</Link></li>
+                <li><Link href="/terms-of-service" className="text-foreground/70 hover:text-primary">Terms of Service</Link></li>
               </ul>
             </div>
             
