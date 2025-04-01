@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import BlogPostDisplay from "@/components/BlogPostDisplay";
-import { wpApiUrl } from '@/config/api'; // Import the helper function
+import { wpApiUrl, getSiteUrl } from '@/config/api'; // Import the helper functions
 
 // Fetch related posts based on category and tags
 async function getRelatedPosts(currentSlug: string, category: string, tags: string[], limit = 2) {
@@ -208,14 +208,14 @@ export async function generateMetadata({
   
   return {
     title: `${post.title} | StreamGearHub Blog`,
-    description: post.metaDescription, // Use the extracted meta description
+    description: post.metaDescription,
     openGraph: {
       title: post.title,
-      description: post.metaDescription, // Use the extracted meta description
+      description: post.metaDescription,
       images: [post.coverImage],
       type: 'article',
     },
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: getSiteUrl(),
   };
 }
 

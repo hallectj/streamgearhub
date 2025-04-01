@@ -64,36 +64,8 @@ async function getRecentPosts() {
     });
   } catch (error) {
     console.error('Error fetching recent posts:', error);
-    // Return fallback data in case of error
-    return [
-      {
-        title: "Best Streaming Setup for Beginners",
-        excerpt: "Get started with streaming without breaking the bank...",
-        date: "March 15, 2025",
-        author: "StreamGearHub Team",
-        slug: "best-streaming-setup-beginners",
-        featuredImage: "/placeholder.svg",
-        category: "Guides",
-      },
-      {
-        title: "Top 10 Microphones for Streamers",
-        excerpt: "Find the perfect microphone for your streaming needs...",
-        date: "March 10, 2025",
-        author: "Audio Expert",
-        slug: "top-10-microphones-streamers",
-        featuredImage: "/placeholder.svg",
-        category: "Reviews",
-      },
-      {
-        title: "How to Grow Your Audience on Twitch",
-        excerpt: "Proven strategies to increase your viewership and followers...",
-        date: "March 5, 2025",
-        author: "Marketing Guru",
-        slug: "grow-audience-twitch",
-        featuredImage: "/placeholder.svg",
-        category: "Tips",
-      }
-    ];
+    // Return empty array instead of fallback data
+    return [];
   }
 }
 
@@ -164,55 +136,10 @@ async function getReviewsForProductCards() {
     });
   } catch (error) {
     console.error('Error processing reviews for product cards:', error);
-    // Return fallback data if there's an error
-    return [
-      {
-        title: "Elgato Stream Deck MK.2",
-        price: "$149.99",
-        image: "/placeholder.svg",
-        rating: 4.8,
-        review_link: "#",
-        amazonUrl: "https://amazon.com",
-        description: "Customize your stream with 15 LCD keys",
-      },
-      {
-        title: "Shure SM7B Microphone",
-        price: "$399.00",
-        image: "/placeholder.svg",
-        rating: 4.9,
-        amazonUrl: "https://amazon.com",
-        review_link: "#",
-        description: "Industry standard vocal microphone",
-      },
-      {
-        title: "Logitech C922x Webcam",
-        price: "$99.99",
-        image: "/placeholder.svg",
-        rating: 4.7,
-        amazonUrl: "https://amazon.com",
-        review_link: "#",
-        description: "Stream in Full HD 1080p at 60 fps",
-      }
-    ];
+    // Return empty array instead of fallback data
+    return [];
   }
 }
-// First, let's add the import for a slider component
-// Remove these Swiper imports
-// import { Swiper, SwiperSlide } from 'swiper/react';
-// import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-// import 'swiper/css';
-// import 'swiper/css/navigation';
-// import 'swiper/css/pagination';
-
-// Add these imports for the carousel components
-// Remove these imports for the carousel components
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from "@/components/ui/carousel";
 
 // Add this import instead
 import StreamerCarousel from "@/components/StreamerCarousel";
@@ -259,30 +186,8 @@ async function getPopularStreamers() {
     });
   } catch (error) {
     console.error('Error fetching streamers:', error);
-    // Return fallback data
-    return [
-      {
-        title: "Ninja",
-        slug: "ninja",
-        image: "/placeholder.svg",
-        featuredImage: "/placeholder.svg",
-        excerpt: "Professional Fortnite player and top Twitch streamer"
-      },
-      {
-        title: "Pokimane",
-        slug: "pokimane",
-        image: "/placeholder.svg",
-        featuredImage: "/placeholder.svg",
-        excerpt: "Variety streamer known for gaming and Just Chatting content"
-      },
-      {
-        title: "Shroud",
-        slug: "shroud",
-        image: "/placeholder.svg",
-        featuredImage: "/placeholder.svg",
-        excerpt: "Former CS:GO pro known for FPS gameplay"
-      }
-    ];
+    // Return empty array instead of fallback data
+    return [];
   }
 }
 

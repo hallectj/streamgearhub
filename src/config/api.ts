@@ -6,6 +6,9 @@
 // Base URL for WordPress API
 export const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://localhost/mylocalwp';
 
+// Base URL for the site
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 // Derived API endpoints
 export const WP_REST_API = `${WORDPRESS_API_URL}/wp-json/wp/v2`;
 export const WP_CUSTOM_API = `${WORDPRESS_API_URL}/wp-json/my_namespace/v1`;
@@ -18,4 +21,9 @@ export function wpApiUrl(endpoint: string): string {
 // Helper function to build custom API URLs
 export function customApiUrl(endpoint: string): string {
   return `${WP_CUSTOM_API}/${endpoint}`;
+}
+
+// Helper function to get the site URL
+export function getSiteUrl(): URL {
+  return new URL(SITE_URL);
 }
