@@ -129,13 +129,31 @@ async function getPost(slug: string) {
       tags = wpPost._embedded['wp:term'][1].map((term: any) => term.name);
     }
     
+    // Extract meta description from Yoast SEO data if available
+    let metaDescription = '';
+    if (wpPost.yoast_head) {
+      const ogDescriptionMatch = wpPost.yoast_head.match(/<meta property="og:description" content="([^"]+)"/);
+      if (ogDescriptionMatch && ogDescriptionMatch[1]) {
+        metaDescription = ogDescriptionMatch[1]
+          .replace(/&hellip;/g, '...')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&#039;/g, "'")
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>');
+      }
+    }
+    
+    // Fallback to excerpt if no Yoast meta description
+    if (!metaDescription) {
+      metaDescription = wpPost.excerpt.rendered.replace(/<[^>]*>/g, '').substring(0, 160);
+    }
+    
     // Calculate read time (rough estimate)
     const wordCount = wpPost.content.rendered.replace(/<[^>]*>/g, '').split(/\s+/).length;
     const readTime = Math.ceil(wordCount / 200) + ' min read'; // Assuming 200 words per minute
     
     // Get recommended products from meta field if available
-    // We'll handle the randomization and limiting in the BlogPostDisplay component
-    // Just pass the raw data here
     const mini_recommended_products = typeof wpPost.mini_recommended_products === 'string' 
       ? wpPost.mini_recommended_products 
       : JSON.stringify(wpPost.mini_recommended_products);
@@ -144,6 +162,7 @@ async function getPost(slug: string) {
       title: wpPost.title.rendered,
       content: wpPost.content.rendered,
       excerpt: wpPost.excerpt.rendered,
+      metaDescription, // Add the extracted meta description
       date: new Date(wpPost.date).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -155,7 +174,6 @@ async function getPost(slug: string) {
       category: categories.length > 0 ? categories[0] : 'Blog',
       tags: tags.length > 0 ? tags : ['streaming'],
       mini_recommended_products,
-      // No hardcoded fallback products anymore
       relatedProducts: [],
     };
   } catch (error) {
@@ -190,10 +208,10 @@ export async function generateMetadata({
   
   return {
     title: `${post.title} | StreamGearHub Blog`,
-    description: post.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+    description: post.metaDescription, // Use the extracted meta description
     openGraph: {
       title: post.title,
-      description: post.excerpt.replace(/<[^>]*>/g, '').substring(0, 160),
+      description: post.metaDescription, // Use the extracted meta description
       images: [post.coverImage],
       type: 'article',
     },

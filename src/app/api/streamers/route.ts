@@ -43,7 +43,7 @@ async function getStreamers() {
       }
       
       return {
-        name: streamer.title.rendered,
+        name: streamer.streamer_name,
         slug: streamer.slug,
         image: streamer.streamer_other_picture || streamer.streamer_profile_picture || '/images/ImageNotFound.png',
         platforms: platforms,

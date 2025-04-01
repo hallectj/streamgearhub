@@ -56,17 +56,8 @@ export default function StreamersPage() {
         setStreamers(data);
       } catch (error) {
         console.error('Error fetching streamers:', error);
-        // Fallback data
-        setStreamers([
-          {
-            name: "xQc",
-            slug: "xqc",
-            image: "https://pbs.twimg.com/media/F3C4nyTX0AAsn-G?format=jpg&name=medium",
-            platforms: ["twitch", "kick"],
-            categories: ["FPS", "Variety", "Just Chatting"]
-          },
-          // Add more fallback streamers if needed
-        ]);
+        // No fallback data, just set empty array
+        setStreamers([]);
       } finally {
         setIsLoading(false);
       }
