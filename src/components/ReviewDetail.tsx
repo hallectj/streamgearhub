@@ -68,19 +68,51 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
   }).format(review.price);
 
   // Render stars based on rating
+  // Update the renderStars function in ReviewDetail.tsx
   const renderStars = () => {
     const stars = [];
-    for (let i = 1; i <= 5; i++) {
+    const fullStars = Math.floor(review.star_rating);
+    const hasHalfStar = review.star_rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
       stars.push(
         <Star 
-          key={i}
-          className={`w-5 h-5 ${i <= review.star_rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+          key={`full-${i}`}
+          className="w-5 h-5 text-yellow-400 fill-yellow-400"
         />
       );
     }
+    
+    // Add half star if needed
+    if (hasHalfStar) {
+      stars.push(
+        <div key="half" className="relative w-5 h-5">
+          <Star className="absolute w-5 h-5 text-gray-300" />
+          <div className="absolute w-2.5 h-5 overflow-hidden">
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+          </div>
+        </div>
+      );
+    }
+    
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Star 
+          key={`empty-${i}`}
+          className="w-5 h-5 text-gray-300"
+        />
+      );
+    }
+    
     return stars;
   };
-
+  
+  // Also update where the rating is displayed
+  <span className="text-lg font-medium">{review.star_rating.toFixed(1)}/5</span>
+  
   return (
     <MainLayout>
       <div className="min-h-screen">

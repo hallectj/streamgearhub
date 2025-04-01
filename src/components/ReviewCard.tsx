@@ -13,15 +13,51 @@ interface ReviewCardProps {
   slug: string;
 }
 
+// Update the stars generation in ReviewCard.tsx
 const ReviewCard = ({ title, excerpt, rating, category, image, slug }: ReviewCardProps) => {
   // Generate stars based on rating
-  const stars = Array(5).fill(0).map((_, i) => (
-    <Star 
-      key={i} 
-      size={16} 
-      className={i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"} 
-    />
-  ));
+  const renderStars = () => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Star 
+          key={`full-${i}`}
+          size={16} 
+          className="fill-yellow-400 text-yellow-400"
+        />
+      );
+    }
+    
+    // Add half star if needed
+    if (hasHalfStar) {
+      stars.push(
+        <div key="half" className="relative" style={{ width: '16px', height: '16px' }}>
+          <Star size={16} className="absolute text-gray-300" />
+          <div className="absolute overflow-hidden" style={{ width: '8px', height: '16px' }}>
+            <Star size={16} className="fill-yellow-400 text-yellow-400" />
+          </div>
+        </div>
+      );
+    }
+    
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Star 
+          key={`empty-${i}`}
+          size={16} 
+          className="text-gray-300"
+        />
+      );
+    }
+    
+    return stars;
+  };
 
   return (
     <Card className="overflow-hidden card-hover h-full flex flex-col">
@@ -35,7 +71,8 @@ const ReviewCard = ({ title, excerpt, rating, category, image, slug }: ReviewCar
       </div>
       <CardContent className="pt-6 flex-grow">
         <div className="flex items-center mb-2">
-          {stars}
+          {renderStars()}
+          <span className="ml-1 text-xs text-muted-foreground">({rating.toFixed(1)})</span>
         </div>
         <h3 className="text-xl font-bold mb-2 line-clamp-2">{title}</h3>
         <div 

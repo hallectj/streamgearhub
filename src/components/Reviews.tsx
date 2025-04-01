@@ -21,14 +21,42 @@ const ReviewCard = ({ image, title, price, rating, snippet, slug }: ReviewCardPr
   // Render stars based on rating
   const renderStars = () => {
     const stars = [];
-    for (let i = 1; i <= 5; i++) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
       stars.push(
         <Star 
-          key={i}
-          className={`w-4 h-4 ${i <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+          key={`full-${i}`}
+          className="w-4 h-4 text-yellow-400 fill-yellow-400"
         />
       );
     }
+    
+    // Add half star if needed
+    if (hasHalfStar) {
+      stars.push(
+        <div key="half" className="relative w-4 h-4">
+          <Star className="absolute w-4 h-4 text-gray-300" />
+          <div className="absolute w-2 h-4 overflow-hidden">
+            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+          </div>
+        </div>
+      );
+    }
+    
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Star 
+          key={`empty-${i}`}
+          className="w-4 h-4 text-gray-300"
+        />
+      );
+    }
+    
     return stars;
   };
 
@@ -45,7 +73,7 @@ const ReviewCard = ({ image, title, price, rating, snippet, slug }: ReviewCardPr
       <div className="p-6 flex-grow flex flex-col">
         <div className="flex items-center mb-1">
           {renderStars()}
-          <span className="ml-1 text-xs text-foreground/70">({rating}/5)</span>
+          <span className="ml-1 text-xs text-foreground/70">({rating.toFixed(1)}/5)</span>
         </div>
         
         <h3 className="font-semibold mb-1 line-clamp-2">{title}</h3>
