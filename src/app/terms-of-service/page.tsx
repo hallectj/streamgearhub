@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import MainLayout from '@/layouts/MainLayout';
+import { SITE_URL } from '@/config/api';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | StreamGearHub',
@@ -19,7 +20,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
             <p>
               Welcome to StreamGearHub. These Terms of Service govern your use of our website located at 
-              streamgearhub.com (the "Service") and any related services provided by StreamGearHub.
+              {SITE_URL.replace(/^https?:\/\//, '')} (the "Service") and any related services provided by StreamGearHub.
             </p>
             <p className="mt-2">
               By accessing our website, you agree to abide by these Terms of Service and to comply with all applicable 

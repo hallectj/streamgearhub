@@ -8,7 +8,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { usePathname } from 'next/navigation';
 import '../styles/content-styles.css'; // Import the shared styles
 import { useEffect, useState } from 'react';
-import { customApiUrl } from '@/config/api';
+import { customApiUrl, SITE_URL } from '@/config/api';
 
 interface RelatedProduct {
   title: string;
@@ -48,7 +48,7 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
   const pathname = usePathname();
   const url = typeof window !== 'undefined' 
     ? `${window.location.origin}${pathname}` 
-    : 'https://streamgearhub.com';
+    : `${SITE_URL}${pathname}`;
   
   const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
   

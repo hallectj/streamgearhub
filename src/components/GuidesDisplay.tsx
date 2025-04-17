@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import MainLayout from "@/layouts/MainLayout";
 import { ShareButtons } from "@/components/ShareButtons";
 import { usePathname } from 'next/navigation';
+import { SITE_URL } from '@/config/api';
 
 // Guide card component interface
 interface GuideProps {
@@ -23,7 +24,7 @@ interface GuideProps {
 const GuideCard = ({ title, excerpt, date, slug, featuredImage, difficulty, readTime, url }: GuideProps) => {
   // Generate the full URL if not provided
   const pathname = usePathname();
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://streamgearhub.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : SITE_URL;
   const fullUrl = url || `${baseUrl}/guides/${slug}`;
   
   return (

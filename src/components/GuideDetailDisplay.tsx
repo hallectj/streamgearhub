@@ -8,6 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import MainLayout from "@/layouts/MainLayout";
 import { ShareButtons } from "@/components/ShareButtons";
 import '../styles/content-styles.css'; // Import the shared styles
+import { SITE_URL } from '@/config/api';
 
 interface GuideDetailDisplayProps {
   guide: {
@@ -121,9 +122,10 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
               
               <div className="mt-10 pt-6 border-t border-border flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                <ShareButtons title={guide.title} url={`${window.location.origin}/guides/${guide.slug}`} />
+                <ShareButtons title={guide.title} url={typeof window !== 'undefined' 
+                  ? window.location.href 
+                  : `${SITE_URL}/guides/${guide.slug}`} />
                 </div>
-
               </div>
             </div>
 

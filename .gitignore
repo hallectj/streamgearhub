@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 #add .next to ignore
 .next
+
+# Environment files
+.env
+.env.production
+.env.development

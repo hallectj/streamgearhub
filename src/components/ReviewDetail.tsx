@@ -9,6 +9,7 @@ import MainLayout from "@/layouts/MainLayout";
 import { ShareButtons } from "@/components/ShareButtons";
 import ProductCard from "@/components/ProductCard";
 import "@/styles/content-styles.css"; // Import the content styles
+import { SITE_URL } from '@/config/api';
 
 // Update the interface to match the actual API response
 interface ReviewData {
@@ -214,7 +215,7 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
                   title={review.title.rendered} 
                   url={typeof window !== 'undefined' 
                     ? window.location.href 
-                    : `https://streamgearhub.com/reviews/${review.slug}`} 
+                    : `${SITE_URL}/reviews/${review.slug}`} 
                 />
               </div>
             </div>
