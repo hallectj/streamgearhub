@@ -202,12 +202,9 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
               
               {/* Buy button */}
               <div className="mt-8 mb-12">
-                // Process the Amazon URL to include the affiliate tag
-                const affiliateUrl = review.amazon_link ? appendAmazonAffiliateTag(review.amazon_link) : '#';
-                
-                // Update the Buy on Amazon button
+                {/* Process the Amazon URL to include the affiliate tag */}
                 <Button size="lg" asChild className="gap-2">
-                  <a href={review.amazon_link ? appendAmazonAffiliateTag(review.amazon_link) : '#'} target="_blank" rel="noopener noreferrer">
+                  <a href={appendAmazonAffiliateTag(review.amazon_link)} target="_blank" rel="noopener noreferrer">
                     <ShoppingCart size={18} />
                     Buy on Amazon - {formattedPrice}
                   </a>
@@ -232,7 +229,7 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
                 <h3 className="font-bold mb-2">Price</h3>
                 <p className="text-2xl font-bold text-primary mb-4">{formattedPrice}</p>
                 <Button asChild className="w-full">
-                  <a href={review.amazon_link} target="_blank" rel="noopener noreferrer">
+                  <a href={appendAmazonAffiliateTag(review.amazon_link)} target="_blank" rel="noopener noreferrer">
                     View on Amazon
                   </a>
                 </Button>
