@@ -180,7 +180,6 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
                   <div>
                     <h3 className="font-bold mb-4">Recommended Products</h3>
                     <div className="space-y-4">
-                      // Update the related products section
                       <div className="grid grid-cols-1 gap-6">
                         {guide.relatedProducts.map((product, index) => (
                           <ProductCard
