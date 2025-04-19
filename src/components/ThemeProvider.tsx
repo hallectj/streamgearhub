@@ -9,6 +9,8 @@ type ThemeProviderProps = {
   defaultTheme?: Theme;
   storageKey?: string;
   disableTransitionOnChange?: boolean;
+  attribute?: string; // Add the attribute prop
+  enableSystem?: boolean; // Add the enableSystem prop
 };
 
 type ThemeProviderState = {
@@ -25,6 +27,8 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "streamgearhub-theme",
   disableTransitionOnChange = false,
+  attribute = "class", // Default to "class" if not provided
+  enableSystem = true, // Default to true if not provided
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -45,7 +49,7 @@ export function ThemeProvider({
     // Remove the class first
     root.classList.remove("light", "dark");
 
-    if (theme === "system") {
+    if (theme === "system" && enableSystem) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
@@ -56,7 +60,7 @@ export function ThemeProvider({
     }
     
     root.classList.add(theme);
-  }, [theme]);
+  }, [theme, enableSystem]);
 
   // Listen for system theme changes
   useEffect(() => {

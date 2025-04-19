@@ -4,7 +4,7 @@ import { wpApiUrl } from '@/config/api';
 export async function fetchReviews() {
   try {
     const response = await fetch(wpApiUrl('review?_embed&per_page=100'), {
-      next: { revalidate: 3600 } // Revalidate every hour
+      //next: { revalidate: 3600 } // Revalidate every hour
     });
     
     if (!response.ok) {
