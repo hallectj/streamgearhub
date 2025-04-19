@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { wpApiUrl } from '@/config/api'; // Import the helper function
+import { appendAmazonAffiliateTag } from '@/lib/amazon';
 
 // Add a helper function to decode HTML entities
 const decodeHtmlEntities = (text: string): string => {
@@ -108,7 +109,7 @@ export default async function StreamerPage({ params }: StreamerPageProps) {
         description: item.info,
         image: item.picture || placeholderImage,
         price: item.price ? `$${item.price.toFixed(2)}` : "Price unavailable",
-        amazonLink: item.amazon_link
+        amazonLink: appendAmazonAffiliateTag(item.amazon_link)
       })) || [],
       
       // Map video equipment from the API response
@@ -117,7 +118,7 @@ export default async function StreamerPage({ params }: StreamerPageProps) {
         description: item.info,
         image: item.picture || placeholderImage,
         price: item.price ? `$${item.price.toFixed(2)}` : "Price unavailable",
-        amazonLink: item.amazon_link
+        amazonLink: appendAmazonAffiliateTag(item.amazon_link)
       })) || [],
       
       // Map computer equipment from the API response

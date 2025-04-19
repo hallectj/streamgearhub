@@ -1,6 +1,7 @@
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Import the utility function
 
 interface ProductCardProps {
   image: string;
@@ -27,6 +28,10 @@ const ProductCard = ({ image, title, price, slug, rating, amazonUrl, description
     return stars;
   };
 
+  // Process the Amazon URL to include the affiliate tag
+  const affiliateUrl = appendAmazonAffiliateTag(amazonUrl);
+
+  // Rest of the component remains the same, but use affiliateUrl instead of amazonUrl
   return (
     <div className="flex flex-col gap-3 p-3 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors h-full">
       <div className='flex gap-3'>
@@ -59,6 +64,22 @@ const ProductCard = ({ image, title, price, slug, rating, amazonUrl, description
           <Button variant="outline" size="sm" asChild className="h-7 text-xs px-2">
             <a href={amazonUrl} target="_blank" rel="noopener noreferrer">
               View on Amazon
+            </a>
+          </Button>
+        </div>
+      </div>
+      
+      {/* Use the processed URL with the affiliate tag */}
+      <div className="p-4 mt-auto">
+        <div className="flex gap-2">
+          <Button asChild className="flex-1">
+            <Link href={slug ? `/reviews/${slug}` : '#'}>
+              Read Review
+            </Link>
+          </Button>
+          <Button variant="outline" asChild className="flex-1">
+            <a href={affiliateUrl} target="_blank" rel="noopener noreferrer">
+              Buy on Amazon
             </a>
           </Button>
         </div>

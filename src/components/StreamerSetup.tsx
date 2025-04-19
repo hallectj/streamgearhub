@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink, ChevronRight } from 'lucide-react';
 import '@/styles/content-styles.css'; // Import the content styles
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Add this import
 
 // Add helper function to decode HTML entities
 const decodeHtmlEntities = (text: string): string => {
@@ -110,6 +111,9 @@ interface StreamerSetupProps {
 }
 
 const EquipmentCard = ({ item }: { item: EquipmentItem }) => {
+  // Process the Amazon URL to include the affiliate tag
+  const affiliateUrl = item.amazonLink ? appendAmazonAffiliateTag(item.amazonLink) : undefined;
+
   return (
     <Card className="overflow-hidden flex flex-col h-full">
       <div className="aspect-video relative bg-muted">
@@ -130,9 +134,9 @@ const EquipmentCard = ({ item }: { item: EquipmentItem }) => {
         <p className="text-sm text-muted-foreground">{item.description}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex gap-2 mt-auto">
-        {item.amazonLink && (
+        {affiliateUrl && (
           <Button variant="outline" size="sm" asChild className="flex-1">
-            <a href={item.amazonLink} target="_blank" rel="noopener noreferrer">
+            <a href={affiliateUrl} target="_blank" rel="noopener noreferrer">
               Buy <ExternalLink className="ml-1 h-3 w-3" />
             </a>
           </Button>

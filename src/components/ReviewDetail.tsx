@@ -10,6 +10,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import ProductCard from "@/components/ProductCard";
 import "@/styles/content-styles.css"; // Import the content styles
 import { SITE_URL } from '@/config/api';
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Add this import
 
 // Update the interface to match the actual API response
 interface ReviewData {
@@ -201,10 +202,14 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
               
               {/* Buy button */}
               <div className="mt-8 mb-12">
-                <Button asChild size="lg" className="gap-2">
-                  <a href={review.amazon_link} target="_blank" rel="noopener noreferrer">
+                // Process the Amazon URL to include the affiliate tag
+                const affiliateUrl = review.amazon_link ? appendAmazonAffiliateTag(review.amazon_link) : '#';
+                
+                // Update the Buy on Amazon button
+                <Button size="lg" asChild className="gap-2">
+                  <a href={review.amazon_link ? appendAmazonAffiliateTag(review.amazon_link) : '#'} target="_blank" rel="noopener noreferrer">
                     <ShoppingCart size={18} />
-                    Buy on Amazon for {formattedPrice}
+                    Buy on Amazon - {formattedPrice}
                   </a>
                 </Button>
               </div>
@@ -238,18 +243,21 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
                 <div className="bg-card rounded-lg p-6 border border-border">
                   <h3 className="font-bold mb-4">Recommended Accessories</h3>
                   <div className="space-y-4">
-                    {relatedProducts.map((product, index) => (
-                      <ProductCard
-                        key={index}
-                        image={product.image}
-                        title={product.title}
-                        price={product.price}
-                        rating={product.rating}
-                        amazonUrl={product.amazonUrl}
-                        description={product.description}
-                        slug={""}                     
-                      />
-                    ))}
+                    // Update the related products section
+                    <div className="grid grid-cols-1 gap-6">
+                      {relatedProducts.map((product, index) => (
+                        <ProductCard
+                          key={index}
+                          image={product.image}
+                          title={product.title}
+                          price={product.price}
+                          slug=""
+                          rating={product.rating}
+                          amazonUrl={appendAmazonAffiliateTag(product.amazonUrl)}
+                          description={product.description}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}

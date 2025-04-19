@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ReviewDetail from '@/components/ReviewDetail';
 import { wpApiUrl, customApiUrl } from '@/config/api'; // Import the helper functions
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Add this import
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -44,7 +45,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
         price: "$" + product.price || "$0.00",
         image: product.product_url || "/placeholder.svg",
         rating: product.rating || 4.5,
-        amazonUrl: product.amazon_url || "https://amazon.com",
+        amazonUrl: product.amazon_url ? appendAmazonAffiliateTag(product.amazon_url) : "https://amazon.com",
         description: product.description || "Check out this recommended product",
         slug: "" // No slug available from the API data
       }));

@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import '../styles/content-styles.css'; // Import the shared styles
 import { useEffect, useState } from 'react';
 import { customApiUrl, SITE_URL } from '@/config/api';
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Add this import
 
 interface RelatedProduct {
   title: string;
@@ -247,33 +248,34 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
                   <div>
                     <h3 className="font-bold mb-4">Recommended Products</h3>
                     <div className="space-y-4">
-                      {relatedProducts.map((product, index) => (
-                        <div key={index} className="bg-card rounded-lg p-4 border border-border">
-                          <div className="flex gap-3">
-                            <div className="w-16 h-16 rounded bg-muted flex-shrink-0">
+                      // Update where the related products are rendered
+                      <div className="grid grid-cols-1 gap-6">
+                        {relatedProducts.map((product, index) => (
+                          <div key={index} className="flex gap-4 items-center p-4 bg-card rounded-lg border border-border">
+                            <div className="w-16 h-16 relative flex-shrink-0">
                               <img 
-                                src={product.image || "/images/ImageNotFound.png"} 
-                                alt={product.title}
-                                className="w-full h-full object-cover rounded"
+                                src={product.image} 
+                                alt={product.title} 
+                                className="w-full h-full object-contain"
                               />
                             </div>
-                            <div>
-                              <h4 className="font-medium text-sm">{product.title}</h4>
-                              <p className="text-xs text-muted-foreground mt-1">{product.price}</p>
-                              <Button 
-                                variant="link" 
-                                size="sm" 
-                                className="p-0 h-auto text-xs mt-1"
-                                asChild
-                              >
-                                <a href={product.amazonUrl} target="_blank" rel="noopener noreferrer">
-                                  View on Amazon
-                                </a>
-                              </Button>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-sm truncate">{product.title}</h4>
+                              <p className="text-primary text-sm font-medium">{product.price}</p>
                             </div>
+                            <Button variant="outline" size="sm" asChild>
+                              <a 
+                                href={appendAmazonAffiliateTag(product.amazonUrl)} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="whitespace-nowrap"
+                              >
+                                Buy Now
+                              </a>
+                            </Button>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

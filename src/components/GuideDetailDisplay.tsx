@@ -9,6 +9,7 @@ import MainLayout from "@/layouts/MainLayout";
 import { ShareButtons } from "@/components/ShareButtons";
 import '../styles/content-styles.css'; // Import the shared styles
 import { SITE_URL } from '@/config/api';
+import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Add this import
 
 interface GuideDetailDisplayProps {
   guide: {
@@ -179,18 +180,21 @@ const GuideDetailDisplay = ({ guide }: GuideDetailDisplayProps) => {
                   <div>
                     <h3 className="font-bold mb-4">Recommended Products</h3>
                     <div className="space-y-4">
-                      {guide.relatedProducts.map((product, index) => (
-                        <ProductCard
-                          key={index}
-                          image={product.image}
-                          title={product.title}
-                          price={product.price}
-                          rating={product.rating}
-                          amazonUrl={product.amazonUrl}
-                          description={product.description} 
-                          slug={""}                        
-                        />
-                      ))}
+                      // Update the related products section
+                      <div className="grid grid-cols-1 gap-6">
+                        {guide.relatedProducts.map((product, index) => (
+                          <ProductCard
+                            key={index}
+                            image={product.image}
+                            title={product.title}
+                            price={product.price}
+                            slug=""
+                            rating={product.rating}
+                            amazonUrl={appendAmazonAffiliateTag(product.amazonUrl)}
+                            description={product.description}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
