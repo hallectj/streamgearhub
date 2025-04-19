@@ -21,10 +21,13 @@ const decodeHtmlEntities = (text: string): string => {
     .replace(/&nbsp;/g, ' ');
 };
 
+// Update the interface to reflect that params is a Promise
 interface StreamerPageProps {
-  params: {
+  params: Promise<{ // Wrap the params object in a Promise
     slug: string;
-  };
+  }>;
+  // Add searchParams if you might use them, matching the expected PageProps structure
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>; 
 }
 
 // Fetch streamer data from WordPress
@@ -54,7 +57,7 @@ async function getStreamer(slug: string) {
 
 //export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
 export async function generateMetadata({ params }: StreamerPageProps): Promise<Metadata> {
-  const resolvedParams = await params;
+  const resolvedParams = await params; // This await is correct
   const streamer = await getStreamer(resolvedParams.slug);
   
   if (!streamer) {
@@ -76,8 +79,9 @@ export async function generateMetadata({ params }: StreamerPageProps): Promise<M
   };
 }
 
+// StreamerPage component signature remains the same as it already uses StreamerPageProps
 export default async function StreamerPage({ params }: StreamerPageProps) {
-  const resolvedParams = await params;
+  const resolvedParams = await params; // This await is correct
   const streamer = await getStreamer(resolvedParams.slug);
   
   // If we don't have data for this streamer, show 404

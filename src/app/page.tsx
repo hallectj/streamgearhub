@@ -94,7 +94,7 @@ export const metadata: Metadata = {
 };
 
 // Import the fetchReviews function
-import { fetchReviews } from './reviews/page';
+import { fetchReviews } from '../lib/reviewsService';
 
 // Add a function to process reviews for product cards
 async function getReviewsForProductCards() {
