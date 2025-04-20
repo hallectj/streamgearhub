@@ -182,9 +182,11 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
               <div className="mt-10 pt-6 border-t border-border">
                 <div className="flex flex-wrap gap-2 mb-6">
                   {post.tags.map((tag, index) => (
+                    // Change the link to point to /blog instead of /blog/tag/{tag}
+                    // This is a temporary fix until we implement tag pages
                     <Link 
                       key={index} 
-                      href={`/blog/tag/${tag.toLowerCase()}`}
+                      href={`/blog`}
                       className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full text-xs font-medium hover:bg-muted/80 transition-colors"
                     >
                       <Tag size={12} />

@@ -58,10 +58,16 @@ const BlogPostCard = ({ title, excerpt, date, author, slug, featuredImage, categ
 };
 
 interface BlogListProps {
-  initialPosts: BlogPostProps[];
+  initialPosts: any[];
+  title?: string;
+  description?: string;
 }
 
-const BlogList = ({ initialPosts }: BlogListProps) => {
+const BlogList = ({ 
+  initialPosts, 
+  title = "Blog", 
+  description = "Latest news, guides, and reviews for streamers and content creators."
+}: BlogListProps) => {
   const [posts] = useState<BlogPostProps[]>(initialPosts);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   
@@ -74,51 +80,53 @@ const BlogList = ({ initialPosts }: BlogListProps) => {
   
   return (
     <MainLayout>
-      <div className="container max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">StreamGearHub Blog</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Latest news, guides, and reviews for streamers and content creators.
-          </p>
-        </div>
-        
-        {/* Category filters */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={activeCategory === category ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory(category)}
-              className="rounded-full"
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-        
-        {/* Blog posts grid */}
-        {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post, index) => (
-              <BlogPostCard key={index} {...post} />
+      <div className="min-h-screen">
+        <div className="container max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{title}</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {description}
+            </p>
+          </div>
+          
+          {/* Category filters */}
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={activeCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveCategory(category)}
+                className="rounded-full"
+              >
+                {category}
+              </Button>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No posts found in this category.</p>
-          </div>
-        )}
-        
-        {/* Load more button */}
-        {filteredPosts.length > 0 && (
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="gap-2">
-              Load More
-              <ArrowRight size={16} />
-            </Button>
-          </div>
-        )}
+          
+          {/* Blog posts grid */}
+          {filteredPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPosts.map((post, index) => (
+                <BlogPostCard key={index} {...post} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No posts found in this category.</p>
+            </div>
+          )}
+          
+          {/* Load more button */}
+          {filteredPosts.length > 0 && (
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg" className="gap-2">
+                Load More
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </MainLayout>
   );
