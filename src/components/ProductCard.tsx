@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { appendAmazonAffiliateTag } from '@/lib/amazon'; // Import the utility function
+import { appendAmazonAffiliateTag } from '@/lib/amazon';
 
 interface ProductCardProps {
   image: string;
@@ -31,12 +31,12 @@ const ProductCard = ({ image, title, price, slug, rating, amazonUrl, description
   // Process the Amazon URL to include the affiliate tag
   const affiliateUrl = appendAmazonAffiliateTag(amazonUrl);
 
-  // Rest of the component remains the same, but use affiliateUrl instead of amazonUrl
   return (
-    <div className="flex flex-col gap-3 p-3 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors h-full">
-      <div className='flex gap-3'>
-        <div className="w-16 h-16 rounded bg-muted flex-shrink-0 overflow-hidden">
-          <img src={image} alt={title} className="w-full h-full object-cover" />
+    <div className="flex flex-col rounded-lg border border-border bg-card/50 hover:bg-card transition-colors h-full">
+      {/* Product header with image and details */}
+      <div className="p-4 flex gap-4">
+        <div className="w-24 h-24 rounded bg-muted flex-shrink-0 overflow-hidden">
+          <img src={image} alt={title} className="w-full h-full object-contain" />
         </div>
         <div className="flex-1 flex flex-col">
           <h4 className="font-medium text-sm mb-1">
@@ -54,30 +54,20 @@ const ProductCard = ({ image, title, price, slug, rating, amazonUrl, description
             </div>
             <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{description}</p>
-        </div>
-      </div>
-
-      <div className="mt-auto">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-primary">{price}</span>
-          <Button variant="outline" size="sm" asChild className="h-7 text-xs px-2">
-            <a href={amazonUrl} target="_blank" rel="noopener noreferrer">
-              View on Amazon
-            </a>
-          </Button>
+          <p className="text-xs text-muted-foreground line-clamp-2">{description}</p>
+          <span className="text-sm font-medium text-primary mt-1">{price}</span>
         </div>
       </div>
       
-      {/* Use the processed URL with the affiliate tag */}
-      <div className="p-4 mt-auto">
+      {/* Action buttons */}
+      <div className="p-3 pt-0 mt-auto border-t border-border/50">
         <div className="flex gap-2">
-          <Button asChild className="flex-1">
+          <Button size="sm" asChild className="flex-1">
             <Link href={slug ? `/reviews/${slug}` : '#'}>
               Read Review
             </Link>
           </Button>
-          <Button variant="outline" asChild className="flex-1">
+          <Button size="sm" variant="outline" asChild className="flex-1">
             <a href={affiliateUrl} target="_blank" rel="noopener noreferrer">
               Buy on Amazon
             </a>
