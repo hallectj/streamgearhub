@@ -250,7 +250,6 @@ const BlogPostDisplay = ({ post, relatedPosts = [] }: BlogPostDisplayProps) => {
                   <div>
                     <h3 className="font-bold mb-4">Recommended Products</h3>
                     <div className="space-y-4">
-                      // Update where the related products are rendered
                       <div className="grid grid-cols-1 gap-6">
                         {relatedProducts.map((product, index) => (
                           <div key={index} className="flex gap-4 items-center p-4 bg-card rounded-lg border border-border">

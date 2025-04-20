@@ -112,7 +112,6 @@ const ReviewDetail = ({ review, relatedProducts = [] }: ReviewDetailProps) => {
     return stars;
   };
   
-  // Also update where the rating is displayed
   <span className="text-lg font-medium">{review.star_rating.toFixed(1)}/5</span>
   
   return (

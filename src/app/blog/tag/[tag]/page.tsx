@@ -5,9 +5,9 @@ import BlogList from "@/components/BlogList";
 // Fetch blog posts by tag
 async function getPostsByTag(tag: string) {
   try {
-    // First, we need to get the tag ID from the tag slug/name
+    // Use the slug parameter to get the exact tag
     const tagsResponse = await fetch(
-      wpApiUrl(`tags?search=${tag}`)
+      wpApiUrl(`tags?slug=${tag}`)
     );
     
     if (!tagsResponse.ok) {
@@ -18,11 +18,13 @@ async function getPostsByTag(tag: string) {
     
     // If no tag found, return empty array
     if (!tags.length) {
+      console.log(`No tag found with slug: ${tag}`);
       return [];
     }
     
     // Get the tag ID
     const tagId = tags[0].id;
+    console.log(`Found tag ID ${tagId} for slug: ${tag}`);
     
     // Now fetch posts with this tag
     const response = await fetch(
