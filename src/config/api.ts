@@ -3,8 +3,15 @@
  * This centralizes all API URLs to make environment switching easier
  */
 
-// Base URL for WordPress API
-export const WORDPRESS_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://localhost/mylocalwp';
+// Base URL for WordPress API - Force HTTPS in production
+export const WORDPRESS_API_URL = (() => {
+  const url = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://localhost/mylocalwp';
+  // Force HTTPS for production URLs
+  if (url.startsWith('http://') && !url.includes('localhost')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+})();
 
 // Base URL for the site
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
