@@ -5,8 +5,13 @@ import { wpApiUrl } from '@/config/api'; // Import the helper function
 async function getStreamers() {
   try {
     const response = await fetch(
-      wpApiUrl('streamer'),
-      { cache: 'no-store' }
+      wpApiUrl('streamer?per_page=100'), // Increased per_page parameter to get more streamers
+      { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }
     );
     
     if (!response.ok) {
@@ -14,6 +19,7 @@ async function getStreamers() {
     }
     
     const data = await response.json();
+    console.log(`Fetched ${data.length} streamers from WordPress`); // Debug log
     
     return data.map((streamer: any) => {
       // Extract categories

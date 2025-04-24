@@ -47,10 +47,13 @@ export default function StreamersPage() {
   useEffect(() => {
     async function fetchStreamers() {
       try {
+        // Modified fetch request to ensure we get all streamers
         const response = await fetch('/api/streamers', {
           cache: 'no-store',
+          next: { revalidate: 0 },
           headers: {
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
           }
         });
         
@@ -59,11 +62,10 @@ export default function StreamersPage() {
         }
         
         const data = await response.json();
-        console.log('Fetched streamers:', data.length); // Debug: Log the number of streamers
+        console.log('Fetched streamers:', data.length, data); // Enhanced logging
         setStreamers(data);
       } catch (error) {
         console.error('Error fetching streamers:', error);
-        // No fallback data, just set empty array
         setStreamers([]);
       } finally {
         setIsLoading(false);
