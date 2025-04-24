@@ -2,13 +2,27 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      'images.pexels.com', 
-      'pbs.twimg.com', 
-      'static.wikia.nocookie.net', 
-      'localhost',
-      'c.media-amazon.com',
-      'm.media-amazon.com'  // Add Amazon's media domain
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.media-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.wikia.nocookie.net',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
     ],
   }
 }
