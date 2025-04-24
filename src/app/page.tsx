@@ -73,7 +73,7 @@ async function getRecentPosts() {
 async function fetchHeroImage() {
   try {
     const res = await fetch(wpApiUrl('media?search=hero-setup'), 
-      { next: { revalidate: 3600 } }
+      //{ next: { revalidate: 3600 } }
     );
     
     if (!res.ok) {
