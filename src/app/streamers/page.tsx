@@ -1,6 +1,5 @@
 'use client'
 
-import MainLayout from '@/layouts/MainLayout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,11 +47,19 @@ export default function StreamersPage() {
   useEffect(() => {
     async function fetchStreamers() {
       try {
-        const response = await fetch('/api/streamers');
+        const response = await fetch('/api/streamers', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
         if (!response.ok) {
           throw new Error('Failed to fetch streamers');
         }
+        
         const data = await response.json();
+        console.log('Fetched streamers:', data.length); // Debug: Log the number of streamers
         setStreamers(data);
       } catch (error) {
         console.error('Error fetching streamers:', error);
@@ -68,13 +75,13 @@ export default function StreamersPage() {
   
   return (
     <div className="container max-w-7xl mx-auto px-4 py-12">
-      <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">Popular Streamers' Setups</h1>
+      <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">Popular Streamers Setups</h1>
       <p className="text-xl text-muted-foreground mb-8">
         Discover the gear used by your favorite content creators
       </p>
       
       <div className="flex flex-col space-y-4 mb-8">
-        {/* Search bar - styled like the image */}
+        {/* Search bar */}
         <div className="relative">
           <Input
             placeholder="Search streamers..."
@@ -85,7 +92,7 @@ export default function StreamersPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
         
-        {/* Category pills - styled like the image */}
+        {/* Category pills */}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory(null)}
@@ -117,6 +124,13 @@ export default function StreamersPage() {
       {isLoading && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Loading streamers...</p>
+        </div>
+      )}
+      
+      {/* Debug info - will help identify issues */}
+      {!isLoading && (
+        <div className="mb-4 text-sm text-muted-foreground">
+          <p>Total streamers: {streamers.length} | Filtered: {filteredStreamers.length}</p>
         </div>
       )}
       
