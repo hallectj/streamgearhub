@@ -7,6 +7,7 @@ const nextConfig = {
       'pbs.twimg.com', 
       'static.wikia.nocookie.net', 
       'localhost',
+      'c.media-amazon.com',
       'm.media-amazon.com'  // Add Amazon's media domain
     ],
   }
