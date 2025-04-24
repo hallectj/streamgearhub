@@ -19,7 +19,6 @@ async function getStreamers() {
     }
     
     const data = await response.json();
-    console.log(`Fetched ${data.length} streamers from WordPress`); // Debug log
     
     return data.map((streamer: any) => {
       // Extract categories

@@ -18,13 +18,11 @@ async function getPostsByTag(tag: string) {
     
     // If no tag found, return empty array
     if (!tags.length) {
-      console.log(`No tag found with slug: ${tag}`);
       return [];
     }
     
     // Get the tag ID
     const tagId = tags[0].id;
-    console.log(`Found tag ID ${tagId} for slug: ${tag}`);
     
     // Now fetch posts with this tag
     const response = await fetch(

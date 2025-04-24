@@ -62,7 +62,6 @@ export default function StreamersPage() {
         }
         
         const data = await response.json();
-        console.log('Fetched streamers:', data.length, data); // Enhanced logging
         setStreamers(data);
       } catch (error) {
         console.error('Error fetching streamers:', error);
@@ -126,13 +125,6 @@ export default function StreamersPage() {
       {isLoading && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Loading streamers...</p>
-        </div>
-      )}
-      
-      {/* Debug info - will help identify issues */}
-      {!isLoading && (
-        <div className="mb-4 text-sm text-muted-foreground">
-          <p>Total streamers: {streamers.length} | Filtered: {filteredStreamers.length}</p>
         </div>
       )}
       
