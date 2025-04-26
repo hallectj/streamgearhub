@@ -19,8 +19,7 @@ async function getGuides() {
   try {
     const response = await fetch(
       wpApiUrl('guides?_embed'),
-      //{ next: { revalidate: 3600 } } // Revalidate every hour
-      { cache: 'no-store' }
+      { next: { revalidate: 3600 } } // Use revalidate instead of no-store
     );
     
     if (!response.ok) {

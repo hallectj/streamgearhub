@@ -1,51 +1,59 @@
 import { MetadataRoute } from 'next'
 import { wpApiUrl, SITE_URL } from '@/config/api'
 
-// Helper function to fetch all posts
+// Helper function to fetch all posts with better error handling
 async function getAllPosts() {
   try {
-    const response = await fetch(wpApiUrl('posts?per_page=100'))
+    const response = await fetch(wpApiUrl('posts?per_page=100'), {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    })
     if (!response.ok) return []
     return await response.json()
   } catch (error) {
     console.error('Error fetching posts for sitemap:', error)
-    return []
+    return [] // Return empty array on error
   }
 }
 
-// Helper function to fetch all reviews
+// Helper function to fetch all reviews with better error handling
 async function getAllReviews() {
   try {
-    const response = await fetch(wpApiUrl('review?per_page=100'))
+    const response = await fetch(wpApiUrl('review?per_page=100'), {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    })
     if (!response.ok) return []
     return await response.json()
   } catch (error) {
     console.error('Error fetching reviews for sitemap:', error)
-    return []
+    return [] // Return empty array on error
   }
 }
 
-// Helper function to fetch all guides
+// Helper function to fetch all guides with better error handling
 async function getAllGuides() {
   try {
-    const response = await fetch(wpApiUrl('guide?per_page=100'))
+    const response = await fetch(wpApiUrl('guide?per_page=100'), {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    })
     if (!response.ok) return []
     return await response.json()
   } catch (error) {
     console.error('Error fetching guides for sitemap:', error)
-    return []
+    return [] // Return empty array on error
   }
 }
 
-// Helper function to fetch all streamers
+// Helper function to fetch all streamers with better error handling
 async function getAllStreamers() {
   try {
-    const response = await fetch(wpApiUrl('streamer?per_page=100'))
+    const response = await fetch(wpApiUrl('streamer?per_page=100'), {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    })
     if (!response.ok) return []
     return await response.json()
   } catch (error) {
     console.error('Error fetching streamers for sitemap:', error)
-    return []
+    return [] // Return empty array on error
   }
 }
 
@@ -98,13 +106,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Fetch all dynamic content
-  const [posts, reviews, guides, streamers] = await Promise.all([
-    getAllPosts(),
-    getAllReviews(),
-    getAllGuides(),
-    getAllStreamers(),
-  ])
+  // Fetch all dynamic content with error handling
+  let posts = [], reviews = [], guides = [], streamers = []
+  
+  try {
+    // Use Promise.allSettled instead of Promise.all to handle partial failures
+    const results = await Promise.allSettled([
+      getAllPosts(),
+      getAllReviews(),
+      getAllGuides(),
+      getAllStreamers(),
+    ])
+    
+    // Extract successful results
+    posts = results[0].status === 'fulfilled' ? results[0].value : []
+    reviews = results[1].status === 'fulfilled' ? results[1].value : []
+    guides = results[2].status === 'fulfilled' ? results[2].value : []
+    streamers = results[3].status === 'fulfilled' ? results[3].value : []
+  } catch (error) {
+    console.error('Error fetching content for sitemap:', error)
+    // Continue with empty arrays
+  }
 
   // Add blog posts to sitemap
   const postUrls = posts.map((post: any) => ({
@@ -138,5 +160,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...routes, ...postUrls, ...reviewUrls, ...guideUrls, ...streamerUrls]
+  return [...routes, ...postUrls, ...reviewUrls, ...guideUrls, ...streamerUrls] as MetadataRoute.Sitemap
 }

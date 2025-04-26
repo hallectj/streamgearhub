@@ -20,7 +20,7 @@ async function getGuide(slug: string) {
   try {
     const response = await fetch(
       wpApiUrl(`guides?slug=${slug}&_embed`),
-      //{ next: { revalidate: 3600 } } // Revalidate every hour
+      { next: { revalidate: 3600 } } // Use revalidate instead of commenting it out
     );
     
     if (!response.ok) {
