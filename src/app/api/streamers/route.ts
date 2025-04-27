@@ -4,10 +4,12 @@ import { wpApiUrl } from '@/config/api'; // Import the helper function
 // Fetch streamers from WordPress
 async function getStreamers() {
   try {
+    // Add a timestamp to bust cache
+    const timestamp = new Date().getTime();
     const response = await fetch(
-      wpApiUrl('streamer?per_page=100'), // Increased per_page parameter to get more streamers
+      `${wpApiUrl('streamer?per_page=100')}&_=${timestamp}`, // Added timestamp query parameter
       { 
-        cache: 'no-store',
+        next: { revalidate: 0 }, // Use Next.js revalidation instead of cache: 'no-store'
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate'
         }

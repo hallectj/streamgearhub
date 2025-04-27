@@ -45,10 +45,12 @@ export default function StreamersPage() {
   
   // Fetch streamers on component mount
   useEffect(() => {
+    // Inside the fetchStreamers function
     async function fetchStreamers() {
       try {
-        // Modified fetch request to ensure we get all streamers
-        const response = await fetch('/api/streamers', {
+        // Add timestamp to bust cache
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/api/streamers?_=${timestamp}`, {
           cache: 'no-store',
           next: { revalidate: 0 },
           headers: {
