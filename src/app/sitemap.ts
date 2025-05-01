@@ -58,7 +58,13 @@ async function getAllStreamers() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = SITE_URL
+  // Get base URL and ensure it has www if it's a production URL
+  let baseUrl = SITE_URL
+  
+  // Add www. to the domain if it's not localhost and doesn't already have www
+  if (!baseUrl.includes('localhost') && !baseUrl.includes('://www.')) {
+    baseUrl = baseUrl.replace('://', '://www.')
+  }
 
   // Static routes
   const routes = [
